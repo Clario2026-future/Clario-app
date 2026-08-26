@@ -1,245 +1,343 @@
 <!DOCTYPE html>
+
 <html lang="sv">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Clario</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
 
     body {
+
       margin: 0;
+
       font-family: Arial, sans-serif;
-      background: #f5f7fb;
+
+      background: #f4f7fb;
+
       color: #1f2937;
+
     }
 
     .app {
-      max-width: 500px;
+
+      max-width: 600px;
+
       margin: 0 auto;
-      min-height: 100vh;
-      padding: 25px 20px;
+
+      padding: 24px 18px;
+
     }
 
-    .logo {
+    h1 {
+
       text-align: center;
-      margin-bottom: 30px;
-    }
 
-    .logo h1 {
-      margin: 0;
-      font-size: 38px;
       color: #2563eb;
+
+      margin-bottom: 6px;
+
     }
 
-    .logo p {
-      margin-top: 8px;
+    .subtitle {
+
+      text-align: center;
+
       color: #6b7280;
+
+      margin-bottom: 28px;
+
     }
 
     .card {
+
       background: white;
+
       border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
 
-    h2 {
-      margin-top: 0;
-      text-align: center;
-    }
+      padding: 20px;
 
-    .camera-button {
-      display: block;
-      width: 100%;
-      background: #2563eb;
-      color: white;
-      padding: 18px;
-      border-radius: 14px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+
       margin-bottom: 18px;
+
     }
 
-    #photo {
-      display: none;
-    }
-
-    #preview {
-      width: 100%;
-      max-height: 350px;
-      object-fit: contain;
-      border-radius: 12px;
-      margin-bottom: 18px;
-      display: none;
-    }
-
-    select,
     button {
+
       width: 100%;
-      padding: 15px;
-      margin-top: 12px;
-      border-radius: 12px;
-      font-size: 16px;
+
+      border: none;
+
+      border-radius: 14px;
+
+      padding: 16px;
+
+      font-size: 17px;
+
+      font-weight: bold;
+
+      cursor: pointer;
+
+      margin-top: 10px;
+
+    }
+
+    .camera {
+
+      background: #2563eb;
+
+      color: white;
+
+    }
+
+    .translate {
+
+      background: #16a34a;
+
+      color: white;
+
+    }
+
+    .simple {
+
+      background: #f59e0b;
+
+      color: white;
+
     }
 
     select {
-      border: 1px solid #d1d5db;
-      background: white;
-    }
 
-    button {
-      border: none;
-      background: #16a34a;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
+      width: 100%;
 
-    .simple-button {
-      background: #7c3aed;
-    }
+      padding: 14px;
 
-    #result {
-      display: none;
-      margin-top: 20px;
-      padding: 18px;
-      background: #eef2ff;
       border-radius: 12px;
-      line-height: 1.5;
+
+      border: 1px solid #d1d5db;
+
+      font-size: 16px;
+
+      margin-top: 8px;
+
     }
 
-    .small {
-      font-size: 13px;
-      color: #6b7280;
-      text-align: center;
-      margin-top: 20px;
+    img {
+
+      width: 100%;
+
+      margin-top: 15px;
+
+      border-radius: 14px;
+
+      display: none;
+
     }
+
+    textarea {
+
+      width: 100%;
+
+      min-height: 180px;
+
+      box-sizing: border-box;
+
+      border-radius: 12px;
+
+      border: 1px solid #d1d5db;
+
+      padding: 14px;
+
+      font-size: 16px;
+
+      resize: vertical;
+
+    }
+
+    #fileInput {
+
+      display: none;
+
+    }
+
+    .status {
+
+      text-align: center;
+
+      color: #6b7280;
+
+      margin-top: 12px;
+
+    }
+
   </style>
+
 </head>
 
 <body>
 
-<div class="app">
+  <div class="app">
 
-  <div class="logo">
     <h1>Clario</h1>
-    <p>Förstå dokument. Enklare.</p>
+
+    <div class="subtitle">Förstå dokument på ditt språk</div>
+
+    <div class="card">
+
+      <h2>1. Ta kort på dokumentet</h2>
+
+      <input
+
+        type="file"
+
+        id="fileInput"
+
+        accept="image/*"
+
+        capture="environment"
+
+      />
+
+      <button class="camera" onclick="openCamera()">
+
+        📷 Ta kort
+
+      </button>
+
+      <img id="preview" alt="Förhandsvisning" />
+
+    </div>
+
+    <div class="card">
+
+      <h2>2. Välj språk</h2>
+
+      <select id="language">
+
+        <option value="English">Engelska</option>
+
+        <option value="Arabic">Arabiska</option>
+
+        <option value="Somali">Somaliska</option>
+
+        <option value="Persian">Persiska</option>
+
+        <option value="Ukrainian">Ukrainska</option>
+
+        <option value="Spanish">Spanska</option>
+
+        <option value="German">Tyska</option>
+
+        <option value="French">Franska</option>
+
+      </select>
+
+      <button class="translate" onclick="translateDocument()">
+
+        🌍 Översätt dokument
+
+      </button>
+
+      <button class="simple" onclick="simplifySwedish()">
+
+        ✨ Förklara på enklare svenska
+
+      </button>
+
+      <p class="status" id="status"></p>
+
+    </div>
+
+    <div class="card">
+
+      <h2>Resultat</h2>
+
+      <textarea
+
+        id="result"
+
+        placeholder="Den översatta eller förenklade texten visas här..."
+
+      ></textarea>
+
+    </div>
+
   </div>
 
-  <div class="card">
+  <script>
 
-    <h2>Fotografera ett dokument</h2>
+    const fileInput = document.getElementById("fileInput");
 
-    <label class="camera-button" for="photo">
-      📷 Ta kort på dokument
-    </label>
+    const preview = document.getElementById("preview");
 
-    <input
-      type="file"
-      id="photo"
-      accept="image/*"
-      capture="environment"
-    >
+    const statusText = document.getElementById("status");
 
-    <img id="preview">
+    function openCamera() {
 
-    <select id="language">
-      <option value="">Välj språk</option>
-      <option value="svenska">Svenska</option>
-      <option value="engelska">English</option>
-      <option value="arabiska">العربية</option>
-      <option value="somaliska">Soomaali</option>
-      <option value="persiska">فارسی</option>
-      <option value="ukrainska">Українська</option>
-      <option value="turkiska">Türkçe</option>
-      <option value="spanska">Español</option>
-    </select>
+      fileInput.click();
 
-    <button onclick="translateDocument()">
-      🌍 Översätt dokument
-    </button>
+    }
 
-    <button class="simple-button" onclick="simpleSwedish()">
-      ✨ Förklara på enkel svenska
-    </button>
+    fileInput.addEventListener("change", function () {
 
-    <div id="result"></div>
+      const file = fileInput.files[0];
 
-  </div>
+      if (!file) return;
 
-  <div class="small">
-    Clario – AI-hjälp för formulär och dokument
-  </div>
+      preview.src = URL.createObjectURL(file);
 
-</div>
+      preview.style.display = "block";
 
-<script>
+      statusText.textContent = "Bild vald ✓";
 
-const photoInput = document.getElementById("photo");
-const preview = document.getElementById("preview");
-const result = document.getElementById("result");
+    });
 
-photoInput.addEventListener("change", function () {
+    function translateDocument() {
 
-  const file = this.files[0];
+      if (!fileInput.files[0]) {
 
-  if (file) {
-    preview.src = URL.createObjectURL(file);
-    preview.style.display = "block";
-  }
+        alert("Ta först ett kort på dokumentet.");
 
-});
+        return;
 
-function translateDocument() {
+      }
 
-  const file = photoInput.files[0];
-  const language = document.getElementById("language").value;
+      const language = document.getElementById("language").value;
 
-  if (!file) {
-    alert("Ta först ett kort på dokumentet.");
-    return;
-  }
+      statusText.textContent =
 
-  if (!language) {
-    alert("Välj vilket språk dokumentet ska översättas till.");
-    return;
-  }
+        "Bilden är klar. Nästa steg är att koppla AI-översättningen till " +
 
-  result.style.display = "block";
+        language +
 
-  result.innerHTML =
-    "<strong>Dokument mottaget ✓</strong><br><br>" +
-    "Clario kommer att läsa dokumentet och översätta det till <strong>" +
-    language +
-    "</strong>.<br><br>AI-funktionen kopplar vi in i nästa steg.";
+        ".";
 
-}
+    }
 
-function simpleSwedish() {
+    function simplifySwedish() {
 
-  const file = photoInput.files[0];
+      if (!fileInput.files[0]) {
 
-  if (!file) {
-    alert("Ta först ett kort på dokumentet.");
-    return;
-  }
+        alert("Ta först ett kort på dokumentet.");
 
-  result.style.display = "block";
+        return;
 
-  result.innerHTML =
-    "<strong>Förklara på enkel svenska ✓</strong><br><br>" +
-    "Clario kommer att läsa dokumentet och förklara innehållet med enklare ord.<br><br>" +
-    "AI-funktionen kopplar vi in i nästa steg.";
+      }
 
-}
+      statusText.textContent =
 
-</script>
+        "Bilden är klar. Nästa steg är att koppla AI för enklare svenska.";
+
+    }
+
+  </script>
 
 </body>
+
 </html>
