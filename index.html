@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clario</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    .app {
+      max-width: 500px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 25px 20px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo h1 {
+      margin: 0;
+      font-size: 38px;
+      color: #2563eb;
+    }
+
+    .logo p {
+      margin-top: 8px;
+      color: #6b7280;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .camera-button {
+      display: block;
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      padding: 18px;
+      border-radius: 14px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 18px;
+    }
+
+    #photo {
+      display: none;
+    }
+
+    #preview {
+      width: 100%;
+      max-height: 350px;
+      object-fit: contain;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      display: none;
+    }
+
+    select,
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 12px;
+      border-radius: 12px;
+      font-size: 16px;
+    }
+
+    select {
+      border: 1px solid #d1d5db;
+      background: white;
+    }
+
+    button {
+      border: none;
+      background: #16a34a;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .simple-button {
+      background: #7c3aed;
+    }
+
+    #result {
+      display: none;
+      margin-top: 20px;
+      padding: 18px;
+      background: #eef2ff;
+      border-radius: 12px;
+      line-height: 1.5;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #6b7280;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="logo">
+    <h1>Clario</h1>
+    <p>Förstå dokument. Enklare.</p>
+  </div>
+
+  <div class="card">
+
+    <h2>Fotografera ett dokument</h2>
+
+    <label class="camera-button" for="photo">
+      📷 Ta kort på dokument
+    </label>
+
+    <input
+      type="file"
+      id="photo"
+      accept="image/*"
+      capture="environment"
+    >
+
+    <img id="preview">
+
+    <select id="language">
+      <option value="">Välj språk</option>
+      <option value="svenska">Svenska</option>
+      <option value="engelska">English</option>
+      <option value="arabiska">العربية</option>
+      <option value="somaliska">Soomaali</option>
+      <option value="persiska">فارسی</option>
+      <option value="ukrainska">Українська</option>
+      <option value="turkiska">Türkçe</option>
+      <option value="spanska">Español</option>
+    </select>
+
+    <button onclick="translateDocument()">
+      🌍 Översätt dokument
+    </button>
+
+    <button class="simple-button" onclick="simpleSwedish()">
+      ✨ Förklara på enkel svenska
+    </button>
+
+    <div id="result"></div>
+
+  </div>
+
+  <div class="small">
+    Clario – AI-hjälp för formulär och dokument
+  </div>
+
+</div>
+
+<script>
+
+const photoInput = document.getElementById("photo");
+const preview = document.getElementById("preview");
+const result = document.getElementById("result");
+
+photoInput.addEventListener("change", function () {
+
+  const file = this.files[0];
+
+  if (file) {
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+  }
+
+});
+
+function translateDocument() {
+
+  const file = photoInput.files[0];
+  const language = document.getElementById("language").value;
+
+  if (!file) {
+    alert("Ta först ett kort på dokumentet.");
+    return;
+  }
+
+  if (!language) {
+    alert("Välj vilket språk dokumentet ska översättas till.");
+    return;
+  }
+
+  result.style.display = "block";
+
+  result.innerHTML =
+    "<strong>Dokument mottaget ✓</strong><br><br>" +
+    "Clario kommer att läsa dokumentet och översätta det till <strong>" +
+    language +
+    "</strong>.<br><br>AI-funktionen kopplar vi in i nästa steg.";
+
+}
+
+function simpleSwedish() {
+
+  const file = photoInput.files[0];
+
+  if (!file) {
+    alert("Ta först ett kort på dokumentet.");
+    return;
+  }
+
+  result.style.display = "block";
+
+  result.innerHTML =
+    "<strong>Förklara på enkel svenska ✓</strong><br><br>" +
+    "Clario kommer att läsa dokumentet och förklara innehållet med enklare ord.<br><br>" +
+    "AI-funktionen kopplar vi in i nästa steg.";
+
+}
+
+</script>
+
+</body>
+</html>
