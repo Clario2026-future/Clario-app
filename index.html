@@ -5,8 +5,10 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
+
+  <meta name="theme-color" content="#246bfd">
 
   <title>Clario</title>
 
@@ -17,196 +19,388 @@
       box-sizing: border-box;
     }
 
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
       background: #f4f7fb;
       color: #1f2937;
     }
 
+    button,
+    select,
+    textarea,
+    input {
+      font: inherit;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
     .app {
-      max-width: 600px;
-      margin: auto;
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
       min-height: 100vh;
-      background: white;
-      padding-bottom: 40px;
+      background: #ffffff;
+      padding-bottom:
+        calc(45px + env(safe-area-inset-bottom));
     }
 
     header {
-      background: linear-gradient(
-        135deg,
-        #246bfd,
-        #59c4e8
-      );
+      background:
+        linear-gradient(
+          135deg,
+          #246bfd,
+          #59c4e8
+        );
 
       color: white;
-      padding: 35px 20px 28px;
       text-align: center;
-      border-radius: 0 0 30px 30px;
+
+      padding:
+        calc(32px + env(safe-area-inset-top))
+        20px
+        28px;
+
+      border-radius:
+        0 0 30px 30px;
+
+      box-shadow:
+        0 10px 30px
+        rgba(36, 107, 253, 0.18);
     }
 
     header h1 {
       margin: 0;
-      font-size: 38px;
+      font-size: 34px;
+      line-height: 1.1;
+      letter-spacing: -0.8px;
     }
 
     header p {
-      margin: 8px 0 0;
+      margin: 9px 0 0;
       opacity: 0.95;
+      font-size: 15px;
     }
 
     main {
-      padding: 25px 20px;
+      padding: 22px 16px 0;
+    }
+
+    .card {
+      background: #ffffff;
+
+      border:
+        1px solid #e6ebf2;
+
+      border-radius: 20px;
+
+      padding: 17px;
+
+      margin-bottom: 16px;
+
+      box-shadow:
+        0 8px 25px
+        rgba(31, 41, 55, 0.055);
+    }
+
+    .card-title {
+      margin: 0 0 13px;
+      font-size: 16px;
+      font-weight: 750;
+      color: #111827;
     }
 
     .language-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 25px;
-    }
-
-    label {
-      display: block;
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 8px;
+      grid-template-columns: 1fr 42px 1fr;
+      gap: 8px;
+      align-items: center;
     }
 
     select {
       width: 100%;
-      padding: 16px;
+      min-width: 0;
 
-      border: 1px solid #d1d5db;
-      border-radius: 18px;
+      padding: 12px 10px;
 
-      background: white;
-      font-size: 18px;
-    }
+      border:
+        1px solid #d6deea;
 
-    textarea {
-      width: 100%;
-      min-height: 190px;
+      border-radius: 13px;
 
-      resize: vertical;
-
-      padding: 18px;
-
-      font-size: 18px;
-      line-height: 1.45;
-
-      border: 1px solid #d1d5db;
-      border-radius: 20px;
+      background: #f9fbfe;
+      color: #1f2937;
 
       outline: none;
     }
 
+    select:focus,
     textarea:focus {
       border-color: #246bfd;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(36, 107, 253, 0.10);
+    }
+
+    .arrow {
+      text-align: center;
+      font-size: 22px;
+      color: #6b7280;
+      user-select: none;
+    }
+
+    textarea {
+      width: 100%;
+
+      min-height: 165px;
+
+      resize: vertical;
+
+      padding: 14px;
+
+      border:
+        1px solid #d6deea;
+
+      border-radius: 15px;
+
+      outline: none;
+
+      background: #fbfcfe;
+      color: #1f2937;
+
+      line-height: 1.48;
+
+      font-size: 16px;
+    }
+
+    textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .button-full {
+      grid-column: 1 / -1;
     }
 
     button {
       width: 100%;
-      border: none;
-      border-radius: 20px;
 
-      padding: 18px;
+      border: 0;
+      border-radius: 14px;
 
-      font-size: 20px;
-      font-weight: bold;
+      min-height: 49px;
+
+      padding: 12px 14px;
+
+      font-weight: 750;
 
       cursor: pointer;
+
+      transition:
+        transform 0.08s ease,
+        opacity 0.15s ease;
+    }
+
+    button:active {
+      transform: scale(0.985);
     }
 
     button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
+      opacity: 0.5;
+      cursor: default;
+      transform: none;
     }
 
-    .translate-btn {
-      margin-top: 18px;
-      background: #2f6ff7;
-      color: white;
+    .primary {
+      background: #246bfd;
+      color: #ffffff;
     }
 
-    .camera-btn {
-      margin-top: 18px;
-
-      background: #f1f5ff;
-      color: #246bfd;
-
-      border: 3px solid #246bfd;
+    .secondary {
+      background: #eaf1ff;
+      color: #1e5adb;
     }
 
-    #cameraInput {
+    .neutral {
+      background: #f0f2f5;
+      color: #374151;
+    }
+
+    .danger {
+      background: #fff0f0;
+      color: #c93434;
+    }
+
+    #fileInput {
       display: none;
     }
 
-    #preview {
+    .preview-wrap {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .preview-label {
+      margin-bottom: 8px;
+
+      color: #6b7280;
+
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    #imagePreview {
+      display: block;
+
       width: 100%;
-      margin-top: 25px;
-      border-radius: 20px;
-      display: none;
+      max-height: 430px;
+
+      object-fit: contain;
+
+      background: #f5f7fa;
+
+      border:
+        1px solid #e1e6ee;
+
+      border-radius: 15px;
     }
 
     .status {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 17px;
-      font-weight: bold;
-      min-height: 24px;
+      display: none;
+
+      margin-top: 14px;
+
+      padding: 13px 14px;
+
+      background: #f4f8ff;
+
+      border:
+        1px solid #dce8ff;
+
+      border-radius: 14px;
+
+      font-size: 14px;
+      line-height: 1.4;
+
+      color: #334155;
     }
 
-    .result-title {
-      margin-top: 28px;
-      font-size: 22px;
-      font-weight: bold;
+    .status.error {
+      background: #fff3f3;
+      border-color: #ffd7d7;
+      color: #a32828;
     }
 
-    .result {
-      margin-top: 10px;
-
-      padding: 20px;
-
-      min-height: 120px;
-
-      background: #f4f7fb;
-
-      border-radius: 20px;
-
-      font-size: 18px;
-      line-height: 1.55;
-
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
+    .status.success {
+      background: #f0fff6;
+      border-color: #c8f0d7;
+      color: #167441;
     }
 
-    .progress {
+    .progress-shell {
+      display: none;
+
       width: 100%;
       height: 8px;
 
-      background: #e5e7eb;
-
-      border-radius: 10px;
-
-      margin-top: 15px;
+      margin-top: 10px;
 
       overflow: hidden;
 
-      display: none;
+      border-radius: 999px;
+
+      background: #e7edf6;
     }
 
-    .progress-bar {
-      height: 100%;
+    #progressBar {
       width: 0%;
+      height: 100%;
 
-      background: #246bfd;
+      border-radius: inherit;
 
-      transition: width 0.2s;
+      background:
+        linear-gradient(
+          90deg,
+          #246bfd,
+          #59c4e8
+        );
+
+      transition: width 0.2s ease;
+    }
+
+    .result-box {
+      min-height: 100px;
+
+      white-space: pre-wrap;
+      word-break: break-word;
+
+      background: #f8fafc;
+
+      border:
+        1px solid #e1e7ef;
+
+      border-radius: 15px;
+
+      padding: 14px;
+
+      line-height: 1.5;
+
+      color: #1f2937;
+    }
+
+    .muted {
+      color: #8a94a4;
+    }
+
+    .small-note {
+      margin: 10px 2px 0;
+
+      color: #7c8797;
+
+      font-size: 12px;
+      line-height: 1.4;
     }
 
     canvas {
       display: none;
+    }
+
+    @media (max-width: 390px) {
+      main {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+
+      .language-row {
+        grid-template-columns: 1fr 34px 1fr;
+      }
+
+      select {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -217,20 +411,25 @@
 
   <header>
     <h1>Clario</h1>
-    <p>Fotografera, läs och översätt dokument</p>
+    <p>Fotografera, läs och översätt text</p>
   </header>
 
   <main>
 
-    <div class="language-row">
+    <section class="card">
 
-      <div>
-        <label for="fromLang">
-          Från
-        </label>
+      <h2 class="card-title">
+        Språk
+      </h2>
 
-        <select id="fromLang">
-          <option value="sv" selected>
+      <div class="language-row">
+
+        <select id="sourceLanguage">
+          <option value="auto">
+            Identifiera automatiskt
+          </option>
+
+          <option value="sv">
             Svenska
           </option>
 
@@ -238,6 +437,10 @@
             Engelska
           </option>
 
+          <option value="ar">
+            Arabiska
+          </option>
+
           <option value="de">
             Tyska
           </option>
@@ -254,26 +457,29 @@
             Italienska
           </option>
 
-          <option value="ar">
-            Arabiska
+          <option value="tr">
+            Turkiska
           </option>
         </select>
-      </div>
 
-      <div>
-        <label for="toLang">
-          Till
-        </label>
+        <div class="arrow">
+          →
+        </div>
 
-        <select id="toLang">
-          <option value="en" selected>
-            Engelska
-          </option>
+        <select id="targetLanguage">
 
           <option value="sv">
             Svenska
           </option>
 
+          <option value="en">
+            Engelska
+          </option>
+
+          <option value="ar">
+            Arabiska
+          </option>
+
           <option value="de">
             Tyska
           </option>
@@ -290,747 +496,941 @@
             Italienska
           </option>
 
-          <option value="ar">
-            Arabiska
+          <option value="tr">
+            Turkiska
           </option>
+
         </select>
+
       </div>
 
-    </div>
+    </section>
 
-    <label for="inputText">
-      Text eller dokument
-    </label>
 
-    <textarea
-      id="inputText"
-      placeholder="Skriv text här eller fotografera ett dokument..."
-    ></textarea>
+    <section class="card">
 
-    <button
-      id="translateButton"
-      class="translate-btn"
-      onclick="translateText()"
-    >
-      🌍 Översätt
-    </button>
+      <h2 class="card-title">
+        Text
+      </h2>
 
-    <button
-      id="cameraButton"
-      class="camera-btn"
-      onclick="document.getElementById('cameraInput').click()"
-    >
-      📷 Ta kort på dokument
-    </button>
+      <textarea
+        id="inputText"
+        placeholder="Skriv text här eller fotografera ett dokument..."
+      ></textarea>
 
-    <input
-      id="cameraInput"
-      type="file"
-      accept="image/*"
-      capture="environment"
-    >
+      <div class="button-grid">
 
-    <div
-      class="progress"
-      id="progress"
-    >
+        <button
+          class="primary button-full"
+          id="translateButton"
+          type="button"
+        >
+          Översätt
+        </button>
+
+        <button
+          class="secondary"
+          id="cameraButton"
+          type="button"
+        >
+          📷 Ta kort
+        </button>
+
+        <button
+          class="secondary"
+          id="galleryButton"
+          type="button"
+        >
+          🖼️ Välj bild
+        </button>
+
+        <button
+          class="neutral"
+          id="copyButton"
+          type="button"
+        >
+          Kopiera text
+        </button>
+
+        <button
+          class="danger"
+          id="clearButton"
+          type="button"
+        >
+          Rensa
+        </button>
+
+      </div>
+
+      <input
+        id="fileInput"
+        type="file"
+        accept="image/*"
+      >
+
+      <input
+        id="cameraInput"
+        type="file"
+        accept="image/*"
+        capture="environment"
+        hidden
+      >
+
       <div
-        class="progress-bar"
-        id="progressBar"
+        class="preview-wrap"
+        id="previewWrap"
+      >
+
+        <div class="preview-label">
+          Bild som läses
+        </div>
+
+        <img
+          id="imagePreview"
+          alt="Förhandsvisning"
+        >
+
+      </div>
+
+      <div
+        class="status"
+        id="statusBox"
       ></div>
-    </div>
 
-    <div
-      id="statusText"
-      class="status"
-    ></div>
+      <div
+        class="progress-shell"
+        id="progressShell"
+      >
+        <div id="progressBar"></div>
+      </div>
 
-    <img
-      id="preview"
-      alt="Dokument"
-    >
+      <p class="small-note">
+        För bästa resultat: håll mobilen rakt ovanför dokumentet,
+        fyll bilden med texten och undvik skuggor och reflexer.
+      </p>
 
-    <canvas id="canvas"></canvas>
+    </section>
 
-    <div class="result-title">
-      Översättning
-    </div>
 
-    <div
-      id="result"
-      class="result"
-    ></div>
+    <section class="card">
+
+      <h2 class="card-title">
+        Översättning
+      </h2>
+
+      <div
+        id="resultBox"
+        class="result-box muted"
+      >
+        Översättningen visas här.
+      </div>
+
+    </section>
 
   </main>
 
 </div>
 
+
+<canvas id="workCanvas"></canvas>
+
+
 <script>
-
-const inputText =
-  document.getElementById("inputText");
-
-const result =
-  document.getElementById("result");
-
-const statusText =
-  document.getElementById("statusText");
-
-const cameraInput =
-  document.getElementById("cameraInput");
-
-const preview =
-  document.getElementById("preview");
-
-const canvas =
-  document.getElementById("canvas");
-
-const progress =
-  document.getElementById("progress");
-
-const progressBar =
-  document.getElementById("progressBar");
-
-const translateButton =
-  document.getElementById("translateButton");
-
-const cameraButton =
-  document.getElementById("cameraButton");
+  "use strict";
 
 
-cameraInput.addEventListener(
-  "change",
-  handleImage
-);
+  /*
+  ==========================================================
+  ELEMENT
+  ==========================================================
+  */
+
+  const sourceLanguage =
+    document.getElementById("sourceLanguage");
+
+  const targetLanguage =
+    document.getElementById("targetLanguage");
+
+  const inputText =
+    document.getElementById("inputText");
+
+  const translateButton =
+    document.getElementById("translateButton");
+
+  const cameraButton =
+    document.getElementById("cameraButton");
+
+  const galleryButton =
+    document.getElementById("galleryButton");
+
+  const copyButton =
+    document.getElementById("copyButton");
+
+  const clearButton =
+    document.getElementById("clearButton");
+
+  const fileInput =
+    document.getElementById("fileInput");
+
+  const cameraInput =
+    document.getElementById("cameraInput");
+
+  const previewWrap =
+    document.getElementById("previewWrap");
+
+  const imagePreview =
+    document.getElementById("imagePreview");
+
+  const statusBox =
+    document.getElementById("statusBox");
+
+  const progressShell =
+    document.getElementById("progressShell");
+
+  const progressBar =
+    document.getElementById("progressBar");
+
+  const resultBox =
+    document.getElementById("resultBox");
+
+  const workCanvas =
+    document.getElementById("workCanvas");
 
 
-async function handleImage(event) {
+  let isBusy = false;
 
-  const file =
-    event.target.files[0];
 
-  if (!file) {
-    return;
+  /*
+  ==========================================================
+  STATUS
+  ==========================================================
+  */
+
+  function showStatus(
+    message,
+    type = "normal"
+  ) {
+    statusBox.textContent = message;
+    statusBox.style.display = "block";
+
+    statusBox.classList.remove(
+      "error",
+      "success"
+    );
+
+    if (type === "error") {
+      statusBox.classList.add("error");
+    }
+
+    if (type === "success") {
+      statusBox.classList.add("success");
+    }
   }
 
-  const imageURL =
-    URL.createObjectURL(file);
 
-  preview.src =
-    imageURL;
+  function hideStatus() {
+    statusBox.style.display = "none";
+    statusBox.textContent = "";
+    statusBox.classList.remove(
+      "error",
+      "success"
+    );
+  }
 
-  preview.style.display =
-    "block";
 
-  inputText.value =
-    "";
-
-  result.innerText =
-    "";
-
-  cameraButton.disabled =
-    true;
-
-  translateButton.disabled =
-    true;
-
-  statusText.innerText =
-    "📄 Förbereder dokument...";
-
-  progress.style.display =
-    "block";
-
-  progressBar.style.width =
-    "2%";
-
-  try {
-
-    const parts =
-      await preprocessAndSplitImage(
-        imageURL
+  function setProgress(percent) {
+    const safe =
+      Math.max(
+        0,
+        Math.min(100, percent)
       );
 
-    let allParts =
-      [];
+    progressShell.style.display = "block";
+    progressBar.style.width =
+      safe + "%";
+  }
 
-    const totalParts =
-      parts.length;
+
+  function hideProgress() {
+    progressShell.style.display = "none";
+    progressBar.style.width = "0%";
+  }
+
+
+  function setBusy(value) {
+    isBusy = value;
+
+    translateButton.disabled = value;
+    cameraButton.disabled = value;
+    galleryButton.disabled = value;
+    clearButton.disabled = value;
+  }
+
+
+  /*
+  ==========================================================
+  FIL / KAMERA
+  ==========================================================
+  */
+
+  cameraButton.addEventListener(
+    "click",
+    function () {
+      if (!isBusy) {
+        cameraInput.click();
+      }
+    }
+  );
+
+
+  galleryButton.addEventListener(
+    "click",
+    function () {
+      if (!isBusy) {
+        fileInput.click();
+      }
+    }
+  );
+
+
+  cameraInput.addEventListener(
+    "change",
+    function () {
+      const file =
+        cameraInput.files &&
+        cameraInput.files[0];
+
+      if (file) {
+        handleImage(file);
+      }
+
+      cameraInput.value = "";
+    }
+  );
+
+
+  fileInput.addEventListener(
+    "change",
+    function () {
+      const file =
+        fileInput.files &&
+        fileInput.files[0];
+
+      if (file) {
+        handleImage(file);
+      }
+
+      fileInput.value = "";
+    }
+  );
+
+
+  /*
+  ==========================================================
+  BILDINLÄSNING
+  ==========================================================
+  */
+
+  function loadImageFromFile(file) {
+    return new Promise(
+      function (resolve, reject) {
+
+        const objectURL =
+          URL.createObjectURL(file);
+
+        const img =
+          new Image();
+
+        img.onload =
+          function () {
+            resolve({
+              img: img,
+              url: objectURL
+            });
+          };
+
+        img.onerror =
+          function () {
+            URL.revokeObjectURL(
+              objectURL
+            );
+
+            reject(
+              new Error(
+                "Bilden kunde inte öppnas."
+              )
+            );
+          };
+
+        img.src = objectURL;
+      }
+    );
+  }
+
+
+  /*
+  ==========================================================
+  BILDSTORLEK
+  ==========================================================
+  */
+
+  function calculateOCRSize(
+    width,
+    height
+  ) {
+
+    /*
+      Tesseract behöver tillräckligt stora bokstäver,
+      men enorma mobilbilder använder onödigt mycket minne.
+
+      Målet är därför ungefär:
+      längsta sidan 2200–3000 px.
+    */
+
+    const maxSide = 2800;
+    const minSideTarget = 1600;
+
+    let scale = 1;
+
+    const longest =
+      Math.max(width, height);
+
+    if (longest > maxSide) {
+      scale =
+        maxSide / longest;
+    }
+
+    else if (longest < minSideTarget) {
+      scale =
+        Math.min(
+          2,
+          minSideTarget / longest
+        );
+    }
+
+    return {
+      width:
+        Math.max(
+          1,
+          Math.round(width * scale)
+        ),
+
+      height:
+        Math.max(
+          1,
+          Math.round(height * scale)
+        )
+    };
+  }
+
+
+  /*
+  ==========================================================
+  ORIGINAL / NORMALISERAD BILD
+  ==========================================================
+  */
+
+  function createBaseCanvas(img) {
+
+    const size =
+      calculateOCRSize(
+        img.naturalWidth,
+        img.naturalHeight
+      );
+
+    const canvas =
+      document.createElement(
+        "canvas"
+      );
+
+    canvas.width =
+      size.width;
+
+    canvas.height =
+      size.height;
+
+    const ctx =
+      canvas.getContext(
+        "2d",
+        {
+          willReadFrequently: true
+        }
+      );
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    ctx.fillStyle = "#ffffff";
+
+    ctx.fillRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    ctx.drawImage(
+      img,
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    return canvas;
+  }
+
+
+  /*
+  ==========================================================
+  GRÅSKALA + AUTOKONTRAST
+
+  Viktigt:
+  Vi använder inte brutal threshold på originalbilden.
+  Den gamla typen av behandling kan ta bort tunna bokstäver.
+  ==========================================================
+  */
+
+  function createGrayContrastCanvas(
+    sourceCanvas
+  ) {
+
+    const canvas =
+      document.createElement(
+        "canvas"
+      );
+
+    canvas.width =
+      sourceCanvas.width;
+
+    canvas.height =
+      sourceCanvas.height;
+
+    const ctx =
+      canvas.getContext(
+        "2d",
+        {
+          willReadFrequently: true
+        }
+      );
+
+    ctx.drawImage(
+      sourceCanvas,
+      0,
+      0
+    );
+
+    const imageData =
+      ctx.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+    const data =
+      imageData.data;
+
+    const histogram =
+      new Array(256).fill(0);
+
+    const grayValues =
+      new Uint8Array(
+        canvas.width *
+        canvas.height
+      );
+
+    let pixelIndex = 0;
 
     for (
       let i = 0;
-      i < totalParts;
-      i++
+      i < data.length;
+      i += 4
     ) {
 
-      const partNumber =
-        i + 1;
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
 
-      statusText.innerText =
-        "🔎 Läser del " +
-        partNumber +
-        " av " +
-        totalParts +
-        "...";
-
-
-      const firstResult =
-        await Tesseract.recognize(
-          parts[i],
-          "swe+eng",
-          {
-            tessedit_pageseg_mode: 6,
-            preserve_interword_spaces: "1",
-
-            logger: message => {
-
-              if (
-                message.status ===
-                "recognizing text"
-              ) {
-
-                const localProgress =
-                  message.progress || 0;
-
-                const totalProgress =
-                  (
-                    i +
-                    localProgress
-                  ) /
-                  totalParts;
-
-                const percent =
-                  Math.min(
-                    94,
-                    Math.round(
-                      totalProgress *
-                      94
-                    )
-                  );
-
-                progressBar.style.width =
-                  percent + "%";
-
-                statusText.innerText =
-                  "🔎 Läser del " +
-                  partNumber +
-                  " av " +
-                  totalParts +
-                  " - " +
-                  percent +
-                  "%";
-              }
-            }
-          }
+      const gray =
+        Math.round(
+          0.299 * r +
+          0.587 * g +
+          0.114 * b
         );
 
+      grayValues[pixelIndex++] =
+        gray;
 
-      statusText.innerText =
-        "🔍 Kontrollerar del " +
-        partNumber +
-        " av " +
-        totalParts +
-        "...";
+      histogram[gray]++;
+    }
 
 
-      const secondResult =
-        await Tesseract.recognize(
-          parts[i],
-          "swe+eng",
-          {
-            tessedit_pageseg_mode: 3,
-            preserve_interword_spaces: "1"
-          }
-        );
+    const totalPixels =
+      grayValues.length;
+
+    const lowTarget =
+      totalPixels * 0.01;
+
+    const highTarget =
+      totalPixels * 0.99;
 
 
-      const firstText =
-        cleanOCRText(
-          firstResult.data.text
-        );
-
-      const secondText =
-        cleanOCRText(
-          secondResult.data.text
-        );
+    let cumulative = 0;
+    let low = 0;
+    let high = 255;
 
 
-      const chosenText =
-        chooseBestOCR(
-          firstText,
-          secondText
-        );
-
+    for (
+      let i = 0;
+      i < 256;
+      i++
+    ) {
+      cumulative +=
+        histogram[i];
 
       if (
-        chosenText
+        cumulative >= lowTarget
       ) {
-
-        allParts.push(
-          chosenText
-        );
+        low = i;
+        break;
       }
     }
 
 
-    let fullText =
-      mergeOCRParts(
-        allParts
-      );
+    cumulative = 0;
+
+    for (
+      let i = 0;
+      i < 256;
+      i++
+    ) {
+      cumulative +=
+        histogram[i];
+
+      if (
+        cumulative >= highTarget
+      ) {
+        high = i;
+        break;
+      }
+    }
 
 
-    fullText =
-      cleanOCRText(
-        fullText
-      );
+    if (high <= low + 20) {
+      low = 0;
+      high = 255;
+    }
 
 
-    inputText.value =
-      fullText;
+    pixelIndex = 0;
 
-
-    progressBar.style.width =
-      "100%";
-
-
-    if (
-      fullText.length >
-      10
+    for (
+      let i = 0;
+      i < data.length;
+      i += 4
     ) {
 
-      statusText.innerText =
-        "✅ Dokumentet är avläst";
+      let gray =
+        grayValues[
+          pixelIndex++
+        ];
 
-    } else {
+      gray =
+        (
+          (gray - low) *
+          255
+        ) /
+        (high - low);
 
-      statusText.innerText =
-        "⚠️ Väldigt lite text hittades";
+      gray =
+        Math.max(
+          0,
+          Math.min(
+            255,
+            gray
+          )
+        );
+
+
+      /*
+        Liten kontrastökning.
+        Inte aggressiv.
+      */
+
+      gray =
+        (
+          gray - 128
+        ) * 1.12 + 128;
+
+      gray =
+        Math.max(
+          0,
+          Math.min(
+            255,
+            gray
+          )
+        );
+
+
+      data[i] = gray;
+      data[i + 1] = gray;
+      data[i + 2] = gray;
     }
 
 
-    setTimeout(
-      () => {
-
-        progress.style.display =
-          "none";
-
-      },
-      700
+    ctx.putImageData(
+      imageData,
+      0,
+      0
     );
 
-
-  } catch (error) {
-
-    console.error(
-      "OCR ERROR:",
-      error
-    );
-
-    statusText.innerText =
-      "❌ Kunde inte läsa dokumentet";
-
-    progress.style.display =
-      "none";
-
-  } finally {
-
-    cameraButton.disabled =
-      false;
-
-    translateButton.disabled =
-      false;
-
-    cameraInput.value =
-      "";
-
-    URL.revokeObjectURL(
-      imageURL
-    );
+    return canvas;
   }
-}
 
 
+  /*
+  ==========================================================
+  OTSU-BILD
 
-function preprocessAndSplitImage(
-  imageURL
-) {
+  Används endast som alternativt OCR-försök.
+  Originalbilden ersätts INTE.
+  ==========================================================
+  */
 
-  return new Promise(
-    (resolve, reject) => {
+  function createThresholdCanvas(
+    sourceCanvas
+  ) {
 
-      const img =
-        new Image();
+    const canvas =
+      document.createElement(
+        "canvas"
+      );
 
+    canvas.width =
+      sourceCanvas.width;
 
-      img.onload = () => {
+    canvas.height =
+      sourceCanvas.height;
 
-        try {
-
-          const ctx =
-            canvas.getContext(
-              "2d",
-              {
-                willReadFrequently: true
-              }
-            );
-
-
-          let scale =
-            2;
-
-
-          const maxWidth =
-            2600;
-
-
-          if (
-            img.width * scale >
-            maxWidth
-          ) {
-
-            scale =
-              maxWidth /
-              img.width;
-          }
-
-
-          canvas.width =
-            Math.round(
-              img.width *
-              scale
-            );
-
-
-          canvas.height =
-            Math.round(
-              img.height *
-              scale
-            );
-
-
-          ctx.fillStyle =
-            "#ffffff";
-
-
-          ctx.fillRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-
-
-          ctx.drawImage(
-            img,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-
-
-          const imageData =
-            ctx.getImageData(
-              0,
-              0,
-              canvas.width,
-              canvas.height
-            );
-
-
-          const data =
-            imageData.data;
-
-
-          for (
-            let i = 0;
-            i < data.length;
-            i += 4
-          ) {
-
-            const r =
-              data[i];
-
-            const g =
-              data[i + 1];
-
-            const b =
-              data[i + 2];
-
-
-            let gray =
-              0.299 * r +
-              0.587 * g +
-              0.114 * b;
-
-
-            gray =
-              (gray - 128) *
-              1.35 +
-              128;
-
-
-            gray =
-              Math.max(
-                0,
-                Math.min(
-                  255,
-                  gray
-                )
-              );
-
-
-            if (
-              gray > 225
-            ) {
-
-              gray =
-                255;
-            }
-
-
-            data[i] =
-              gray;
-
-            data[i + 1] =
-              gray;
-
-            data[i + 2] =
-              gray;
-          }
-
-
-          ctx.putImageData(
-            imageData,
-            0,
-            0
-          );
-
-
-          const parts =
-            [];
-
-
-          const imageHeight =
-            canvas.height;
-
-
-          const imageWidth =
-            canvas.width;
-
-
-          let numberOfParts =
-            2;
-
-
-          if (
-            imageHeight >
-            imageWidth *
-            1.8
-          ) {
-
-            numberOfParts =
-              3;
-          }
-
-
-          if (
-            imageHeight >
-            imageWidth *
-            3
-          ) {
-
-            numberOfParts =
-              4;
-          }
-
-
-          if (
-            imageHeight >
-            imageWidth *
-            4.5
-          ) {
-
-            numberOfParts =
-              5;
-          }
-
-
-          const overlap =
-            Math.round(
-              imageHeight *
-              0.012
-            );
-
-
-          const basePartHeight =
-            Math.ceil(
-              imageHeight /
-              numberOfParts
-            );
-
-
-          for (
-            let partIndex = 0;
-            partIndex <
-            numberOfParts;
-            partIndex++
-          ) {
-
-            let startY =
-              partIndex *
-              basePartHeight;
-
-
-            let endY =
-              Math.min(
-                imageHeight,
-                startY +
-                basePartHeight
-              );
-
-
-            if (
-              partIndex > 0
-            ) {
-
-              startY =
-                Math.max(
-                  0,
-                  startY -
-                  overlap
-                );
-            }
-
-
-            if (
-              partIndex <
-              numberOfParts - 1
-            ) {
-
-              endY =
-                Math.min(
-                  imageHeight,
-                  endY +
-                  overlap
-                );
-            }
-
-
-            const partHeight =
-              endY -
-              startY;
-
-
-            const partCanvas =
-              document.createElement(
-                "canvas"
-              );
-
-
-            partCanvas.width =
-              imageWidth;
-
-
-            partCanvas.height =
-              partHeight;
-
-
-            const partCtx =
-              partCanvas.getContext(
-                "2d"
-              );
-
-
-            partCtx.fillStyle =
-              "#ffffff";
-
-
-            partCtx.fillRect(
-              0,
-              0,
-              imageWidth,
-              partHeight
-            );
-
-
-            partCtx.drawImage(
-              canvas,
-
-              0,
-              startY,
-              imageWidth,
-              partHeight,
-
-              0,
-              0,
-              imageWidth,
-              partHeight
-            );
-
-
-            parts.push(
-              partCanvas.toDataURL(
-                "image/jpeg",
-                0.95
-              )
-            );
-          }
-
-
-          resolve(
-            parts
-          );
-
-
-        } catch (error) {
-
-          reject(
-            error
-          );
+    const ctx =
+      canvas.getContext(
+        "2d",
+        {
+          willReadFrequently: true
         }
-      };
+      );
+
+    ctx.drawImage(
+      sourceCanvas,
+      0,
+      0
+    );
 
 
-      img.onerror =
-        reject;
+    const imageData =
+      ctx.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+    const data =
+      imageData.data;
+
+    const histogram =
+      new Array(256).fill(0);
+
+    const grayValues =
+      new Uint8Array(
+        canvas.width *
+        canvas.height
+      );
 
 
-      img.src =
-        imageURL;
+    let p = 0;
+
+
+    for (
+      let i = 0;
+      i < data.length;
+      i += 4
+    ) {
+
+      const gray =
+        Math.round(
+          0.299 * data[i] +
+          0.587 * data[i + 1] +
+          0.114 * data[i + 2]
+        );
+
+      grayValues[p++] =
+        gray;
+
+      histogram[gray]++;
     }
-  );
-}
 
 
+    const total =
+      grayValues.length;
 
-function cleanOCRText(text) {
 
-  if (!text) {
-    return "";
+    let sum = 0;
+
+
+    for (
+      let i = 0;
+      i < 256;
+      i++
+    ) {
+      sum +=
+        i * histogram[i];
+    }
+
+
+    let sumB = 0;
+    let weightB = 0;
+    let maxVariance = 0;
+    let threshold = 160;
+
+
+    for (
+      let i = 0;
+      i < 256;
+      i++
+    ) {
+
+      weightB +=
+        histogram[i];
+
+
+      if (weightB === 0) {
+        continue;
+      }
+
+
+      const weightF =
+        total - weightB;
+
+
+      if (weightF === 0) {
+        break;
+      }
+
+
+      sumB +=
+        i * histogram[i];
+
+
+      const meanB =
+        sumB / weightB;
+
+
+      const meanF =
+        (
+          sum - sumB
+        ) / weightF;
+
+
+      const variance =
+        weightB *
+        weightF *
+        Math.pow(
+          meanB - meanF,
+          2
+        );
+
+
+      if (
+        variance >
+        maxVariance
+      ) {
+
+        maxVariance =
+          variance;
+
+        threshold =
+          i;
+      }
+    }
+
+
+    /*
+      Lite försiktigare än ren Otsu.
+      Hindrar ljusa tunna tecken
+      från att försvinna.
+    */
+
+    threshold =
+      Math.min(
+        210,
+        threshold + 12
+      );
+
+
+    p = 0;
+
+
+    for (
+      let i = 0;
+      i < data.length;
+      i += 4
+    ) {
+
+      const gray =
+        grayValues[p++];
+
+      const value =
+        gray < threshold
+          ? 0
+          : 255;
+
+
+      data[i] = value;
+      data[i + 1] = value;
+      data[i + 2] = value;
+    }
+
+
+    ctx.putImageData(
+      imageData,
+      0,
+      0
+    );
+
+
+    return canvas;
   }
 
 
-  let cleaned =
-    text
+  /*
+  ==========================================================
+  TEXTRENSNING
+
+  Mycket försiktig.
+
+  Vi får INTE "gissa" ord eller ta bort bokstäver
+  som OCR faktiskt har hittat.
+  ==========================================================
+  */
+
+  function cleanOCRText(text) {
+
+    if (!text) {
+      return "";
+    }
+
+    return text
+
+      .replace(
+        /\r\n/g,
+        "\n"
+      )
 
       .replace(
         /\r/g,
-        ""
-      )
-
-      .replace(
-        /[|¦]+/g,
-        "I"
-      )
-
-      .replace(
-        /[“”]/g,
-        '"'
-      )
-
-      .replace(
-        /[‘’]/g,
-        "'"
+        "\n"
       )
 
       .replace(
@@ -1039,756 +1439,1251 @@ function cleanOCRText(text) {
       )
 
       .replace(
-        / +\n/g,
+        / *\n */g,
         "\n"
       )
 
       .replace(
-        /\n +/g,
-        "\n"
+        /\n{3,}/g,
+        "\n\n"
       )
 
       .replace(
-        /\s+([,.!?;:])/g,
-        "$1"
-      );
-
-
-  let lines =
-    cleaned
-      .split("\n")
-      .map(
-        line =>
-          line.trim()
+        /(\w)-\n(\w)/g,
+        "$1$2"
       )
-      .filter(
-        line =>
-          line.length > 0
-      );
 
-
-  lines =
-    lines.filter(
-      line => {
-
-        if (
-          line.length <= 2 &&
-          !/\d/.test(line)
-        ) {
-
-          return false;
-        }
-
-
-        const letters =
-          (
-            line.match(
-              /\p{L}/gu
-            ) ||
-            []
-          ).length;
-
-
-        const numbers =
-          (
-            line.match(
-              /\d/g
-            ) ||
-            []
-          ).length;
-
-
-        const strange =
-          (
-            line.match(
-              /[^\p{L}\p{N}\s.,:;!?()\/@+\-%–—'"#&]/gu
-            ) ||
-            []
-          ).length;
-
-
-        if (
-          strange >
-          line.length *
-          0.25
-        ) {
-
-          return false;
-        }
-
-
-        const words =
-          line
-            .split(
-              /\s+/
-            )
-            .filter(Boolean);
-
-
-        const tinyWords =
-          words.filter(
-            word =>
-              word.length <= 2
-          ).length;
-
-
-        if (
-          words.length >= 5 &&
-          tinyWords /
-          words.length >
-          0.7 &&
-          numbers === 0
-        ) {
-
-          return false;
-        }
-
-
-        if (
-          letters === 0 &&
-          numbers === 0
-        ) {
-
-          return false;
-        }
-
-
-        return true;
-      }
-    );
-
-
-  const finalLines =
-    [];
-
-
-  let previous =
-    "";
-
-
-  for (
-    const line of lines
-  ) {
-
-    const normalized =
-      line
-        .toLowerCase()
-        .replace(
-          /\s+/g,
-          " "
-        );
-
-
-    if (
-      normalized ===
-      previous
-    ) {
-
-      continue;
-    }
-
-
-    finalLines.push(
-      line
-    );
-
-
-    previous =
-      normalized;
+      .trim();
   }
 
 
-  return finalLines
-    .join("\n")
-    .replace(
-      /\n{3,}/g,
-      "\n\n"
-    )
-    .trim();
-}
+  /*
+  ==========================================================
+  BEDÖM OCR-RESULTAT
 
+  Vi tittar inte bara på Tesseracts confidence.
+  Ett resultat med många trasiga enbokstavsord,
+  konstiga symboler och nästan inga riktiga ord
+  får lägre poäng.
+  ==========================================================
+  */
 
-
-function chooseBestOCR(
-  first,
-  second
-) {
-
-  const scoreText =
-    text => {
-
-      if (!text) {
-        return 0;
-      }
-
-
-      const letters =
-        (
-          text.match(
-            /\p{L}/gu
-          ) ||
-          []
-        ).length;
-
-
-      const digits =
-        (
-          text.match(
-            /\d/g
-          ) ||
-          []
-        ).length;
-
-
-      const usefulLines =
-        text
-          .split("\n")
-          .filter(
-            line =>
-              line.trim()
-                .length >=
-              4
-          )
-          .length;
-
-
-      const suspiciousLines =
-        text
-          .split("\n")
-          .filter(
-            line => {
-
-              const words =
-                line
-                  .trim()
-                  .split(
-                    /\s+/
-                  )
-                  .filter(Boolean);
-
-
-              if (
-                words.length <
-                4
-              ) {
-
-                return false;
-              }
-
-
-              const shortWords =
-                words.filter(
-                  word =>
-                    word.length <= 2
-                ).length;
-
-
-              return (
-                shortWords /
-                words.length >
-                0.7
-              );
-            }
-          )
-          .length;
-
-
-      return (
-        letters +
-        digits *
-        0.8 +
-        usefulLines *
-        6 -
-        suspiciousLines *
-        15
-      );
-    };
-
-
-  const scoreFirst =
-    scoreText(
-      first
-    );
-
-
-  const scoreSecond =
-    scoreText(
-      second
-    );
-
-
-  return scoreSecond >
-    scoreFirst
-      ? second
-      : first;
-}
-
-
-
-function normalizeOCRLine(
-  line
-) {
-
-  return line
-    .toLowerCase()
-    .replace(
-      /[^\p{L}\p{N}]/gu,
-      ""
-    );
-}
-
-
-
-function mergeOCRParts(
-  parts
-) {
-
-  const resultLines =
-    [];
-
-
-  for (
-    const part of parts
+  function scoreOCRResult(
+    text,
+    confidence
   ) {
 
-    const lines =
-      part
-        .split("\n")
-        .map(
-          line =>
-            line.trim()
-        )
+    const cleaned =
+      cleanOCRText(text);
+
+    if (!cleaned) {
+      return -10000;
+    }
+
+
+    const words =
+      cleaned
+        .split(/\s+/)
         .filter(Boolean);
 
 
-    for (
-      const line of lines
-    ) {
-
-      const normalized =
-        normalizeOCRLine(
-          line
-        );
+    if (words.length === 0) {
+      return -10000;
+    }
 
 
-      if (
-        normalized.length <
-        2
-      ) {
-
-        continue;
-      }
-
-
-      const recentLines =
-        resultLines.slice(
-          -10
-        );
+    const letters =
+      (
+        cleaned.match(
+          /[A-Za-zÀ-ÖØ-öø-ÿÅÄÖåäö]/g
+        ) || []
+      ).length;
 
 
-      const alreadyExists =
-        recentLines.some(
-          oldLine => {
-
-            const oldNormalized =
-              normalizeOCRLine(
-                oldLine
-              );
+    const strange =
+      (
+        cleaned.match(
+          /[^\p{L}\p{N}\s.,:;!?%€$£¥()+\-\/'"@#&]/gu
+        ) || []
+      ).length;
 
 
-            if (
-              normalized ===
-              oldNormalized
-            ) {
+    const normalWords =
+      words.filter(
+        function (word) {
 
-              return true;
-            }
+          const stripped =
+            word.replace(
+              /[^\p{L}]/gu,
+              ""
+            );
+
+          return (
+            stripped.length >= 3
+          );
+        }
+      ).length;
 
 
-            if (
-              normalized.length >= 15 &&
-              oldNormalized.length >= 15
-            ) {
+    const singleLetterWords =
+      words.filter(
+        function (word) {
+
+          const stripped =
+            word.replace(
+              /[^\p{L}]/gu,
+              ""
+            );
+
+          return (
+            stripped.length === 1
+          );
+        }
+      ).length;
+
+
+    const averageWordLength =
+      words.reduce(
+        function (
+          sum,
+          word
+        ) {
+
+          return (
+            sum +
+            word.length
+          );
+        },
+        0
+      ) /
+      words.length;
+
+
+    let score =
+      Number(confidence || 0);
+
+
+    score +=
+      Math.min(
+        25,
+        normalWords * 0.20
+      );
+
+
+    score +=
+      Math.min(
+        15,
+        letters / 80
+      );
+
+
+    score +=
+      Math.min(
+        8,
+        averageWordLength
+      );
+
+
+    score -=
+      strange * 2.5;
+
+
+    score -=
+      singleLetterWords * 0.45;
+
+
+    return score;
+  }
+
+
+  /*
+  ==========================================================
+  OCR-SPRÅK
+  ==========================================================
+  */
+
+  function getOCRLanguage() {
+
+    const lang =
+      sourceLanguage.value;
+
+
+    if (lang === "sv") {
+      return "swe";
+    }
+
+
+    if (lang === "en") {
+      return "eng";
+    }
+
+
+    if (lang === "de") {
+      return "deu";
+    }
+
+
+    if (lang === "fr") {
+      return "fra";
+    }
+
+
+    if (lang === "es") {
+      return "spa";
+    }
+
+
+    if (lang === "it") {
+      return "ita";
+    }
+
+
+    if (lang === "tr") {
+      return "tur";
+    }
+
+
+    if (lang === "ar") {
+      return "ara";
+    }
+
+
+    /*
+      Auto:
+      Svenska + engelska är den vanligaste
+      kombinationen i appen.
+
+      Färre språk samtidigt brukar dessutom
+      ge bättre OCR än att ladda "allt".
+    */
+
+    return "swe+eng";
+  }
+
+
+  /*
+  ==========================================================
+  ETT OCR-FÖRSÖK
+  ==========================================================
+  */
+
+  async function runOCRPass(
+    canvas,
+    language,
+    pageSegMode,
+    progressStart,
+    progressEnd
+  ) {
+
+    const result =
+      await Tesseract.recognize(
+        canvas,
+        language,
+        {
+          logger:
+            function (message) {
 
               if (
-                normalized.includes(
-                  oldNormalized
-                ) ||
-                oldNormalized.includes(
-                  normalized
-                )
+                message.status ===
+                "recognizing text"
               ) {
 
-                return true;
+                const localProgress =
+                  Number(
+                    message.progress || 0
+                  );
+
+
+                const totalProgress =
+                  progressStart +
+                  (
+                    progressEnd -
+                    progressStart
+                  ) *
+                  localProgress;
+
+
+                setProgress(
+                  Math.round(
+                    totalProgress
+                  )
+                );
               }
             }
+        }
+      );
 
 
-            return false;
-          }
+    /*
+      pageSegMode sätts i efterhand
+      inte säkert av recognize-wrappern
+      i alla Tesseract.js-versioner.
+
+      Därför använder vi i huvudsak
+      olika bildvarianter för stabilitet.
+    */
+
+
+    return {
+      text:
+        result &&
+        result.data
+          ? result.data.text || ""
+          : "",
+
+      confidence:
+        result &&
+        result.data
+          ? result.data.confidence || 0
+          : 0,
+
+      mode:
+        pageSegMode
+    };
+  }
+
+
+  /*
+  ==========================================================
+  OCR HUVUDFUNKTION
+
+  1. Original/normaliserad färgbild
+  2. Försiktig gråskala/autokontrast
+  3. Threshold endast om de två första är svaga
+
+  Det bästa resultatet väljs automatiskt.
+  ==========================================================
+  */
+
+  async function performOCR(img) {
+
+    const language =
+      getOCRLanguage();
+
+
+    const baseCanvas =
+      createBaseCanvas(img);
+
+
+    const grayCanvas =
+      createGrayContrastCanvas(
+        baseCanvas
+      );
+
+
+    showStatus(
+      "Läser dokumentet – första OCR-försöket..."
+    );
+
+
+    setProgress(5);
+
+
+    const first =
+      await runOCRPass(
+        baseCanvas,
+        language,
+        "AUTO",
+        5,
+        40
+      );
+
+
+    showStatus(
+      "Kontrollerar texten med en förbättrad bild..."
+    );
+
+
+    const second =
+      await runOCRPass(
+        grayCanvas,
+        language,
+        "AUTO",
+        40,
+        75
+      );
+
+
+    const firstScore =
+      scoreOCRResult(
+        first.text,
+        first.confidence
+      );
+
+
+    const secondScore =
+      scoreOCRResult(
+        second.text,
+        second.confidence
+      );
+
+
+    let results =
+      [
+        {
+          name: "original",
+          ...first,
+          score: firstScore
+        },
+
+        {
+          name: "gray",
+          ...second,
+          score: secondScore
+        }
+      ];
+
+
+    /*
+      Gör tredje OCR-försöket endast
+      om resultaten fortfarande verkar svaga.
+      Detta gör appen snabbare när första
+      eller andra försöket redan är bra.
+    */
+
+    const bestBeforeThird =
+      Math.max(
+        firstScore,
+        secondScore
+      );
+
+
+    if (
+      bestBeforeThird < 78
+    ) {
+
+      showStatus(
+        "Texten är svårläst – gör ett extra OCR-försök..."
+      );
+
+
+      const thresholdCanvas =
+        createThresholdCanvas(
+          grayCanvas
         );
 
 
+      const third =
+        await runOCRPass(
+          thresholdCanvas,
+          language,
+          "SINGLE_BLOCK",
+          75,
+          96
+        );
+
+
+      results.push({
+        name: "threshold",
+        ...third,
+
+        score:
+          scoreOCRResult(
+            third.text,
+            third.confidence
+          )
+      });
+    }
+
+
+    results.sort(
+      function (a, b) {
+        return b.score - a.score;
+      }
+    );
+
+
+    const winner =
+      results[0];
+
+
+    const cleaned =
+      cleanOCRText(
+        winner.text
+      );
+
+
+    if (
+      cleaned.length < 2
+    ) {
+      throw new Error(
+        "Jag kunde inte hitta någon läsbar text i bilden."
+      );
+    }
+
+
+    setProgress(100);
+
+
+    return {
+      text: cleaned,
+
+      confidence:
+        Math.round(
+          winner.confidence
+        ),
+
+      method:
+        winner.name
+    };
+  }
+
+
+  /*
+  ==========================================================
+  HANTERA BILD
+  ==========================================================
+  */
+
+  async function handleImage(file) {
+
+    if (
+      !file ||
+      !file.type.startsWith(
+        "image/"
+      )
+    ) {
+
+      showStatus(
+        "Välj en vanlig bildfil.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    /*
+      25 MB räcker för vanliga mobilbilder.
+    */
+
+    if (
+      file.size >
+      25 * 1024 * 1024
+    ) {
+
+      showStatus(
+        "Bilden är för stor. Välj en bild under 25 MB.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    setBusy(true);
+
+    hideStatus();
+
+    setProgress(1);
+
+
+    let loaded = null;
+
+
+    try {
+
+      showStatus(
+        "Öppnar bilden..."
+      );
+
+
+      loaded =
+        await loadImageFromFile(
+          file
+        );
+
+
+      imagePreview.src =
+        loaded.url;
+
+
+      previewWrap.style.display =
+        "block";
+
+
+      /*
+        Vänta en kort stund så Safari
+        hinner rendera bilden ordentligt.
+      */
+
+      await new Promise(
+        function (resolve) {
+          requestAnimationFrame(
+            resolve
+          );
+        }
+      );
+
+
+      const ocr =
+        await performOCR(
+          loaded.img
+        );
+
+
+      inputText.value =
+        ocr.text;
+
+
+      showStatus(
+        "Texten är klar. OCR-säkerhet cirka " +
+        ocr.confidence +
+        "%.",
+        "success"
+      );
+
+
+      /*
+        Scrolla inte automatiskt.
+        På iPhone känns sidan stabilare
+        om användarens position behålls.
+      */
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+
+      showStatus(
+        error &&
+        error.message
+          ? error.message
+          : "OCR kunde inte läsa bilden.",
+        "error"
+      );
+
+    }
+
+    finally {
+
+      hideProgress();
+
+      setBusy(false);
+
+
+      /*
+        URL behöver inte ligga kvar
+        efter att bilden laddats.
+        Bildobjektet har redan lästs in.
+      */
+
       if (
-        !alreadyExists
+        loaded &&
+        loaded.url
       ) {
 
-        resultLines.push(
-          line
+        setTimeout(
+          function () {
+
+            try {
+              URL.revokeObjectURL(
+                loaded.url
+              );
+            }
+
+            catch (_) {
+            }
+
+          },
+          2000
         );
       }
     }
   }
 
 
-  return resultLines
-    .join("\n");
-}
+  /*
+  ==========================================================
+  ÖVERSÄTTNING
+  ==========================================================
+  */
 
-
-
-function splitText(
-  text,
-  maxLength = 450
-) {
-
-  const pieces =
-    [];
-
-
-  let remaining =
-    text.trim();
-
-
-  while (
-    remaining.length >
-    maxLength
+  function splitText(
+    text,
+    maxLength = 420
   ) {
 
-    let cut =
-      remaining.lastIndexOf(
-        ". ",
-        maxLength
-      );
+    const chunks = [];
+
+    let remaining =
+      text.trim();
 
 
-    if (
-      cut < 100
+    while (
+      remaining.length >
+      maxLength
     ) {
 
-      cut =
+      let cut =
         remaining.lastIndexOf(
           "\n",
           maxLength
         );
-    }
-
-
-    if (
-      cut < 100
-    ) {
-
-      cut =
-        remaining.lastIndexOf(
-          " ",
-          maxLength
-        );
-    }
-
-
-    if (
-      cut < 100
-    ) {
-
-      cut =
-        maxLength;
-    }
-
-
-    pieces.push(
-      remaining
-        .slice(
-          0,
-          cut + 1
-        )
-        .trim()
-    );
-
-
-    remaining =
-      remaining
-        .slice(
-          cut + 1
-        )
-        .trim();
-  }
-
-
-  if (
-    remaining
-  ) {
-
-    pieces.push(
-      remaining
-    );
-  }
-
-
-  return pieces;
-}
-
-
-
-async function translateText() {
-
-  const text =
-    inputText.value.trim();
-
-
-  const from =
-    document
-      .getElementById(
-        "fromLang"
-      )
-      .value;
-
-
-  const to =
-    document
-      .getElementById(
-        "toLang"
-      )
-      .value;
-
-
-  if (!text) {
-
-    alert(
-      "Skriv en text eller ta kort på ett dokument först."
-    );
-
-    return;
-  }
-
-
-  if (
-    from === to
-  ) {
-
-    result.innerText =
-      text;
-
-    statusText.innerText =
-      "✅ Texten är redan på valt språk";
-
-    return;
-  }
-
-
-  translateButton.disabled =
-    true;
-
-  cameraButton.disabled =
-    true;
-
-
-  statusText.innerText =
-    "🌍 Översätter...";
-
-
-  result.innerText =
-    "Översätter...";
-
-
-  try {
-
-    const chunks =
-      splitText(
-        text,
-        450
-      );
-
-
-    let translatedParts =
-      [];
-
-
-    for (
-      let i = 0;
-      i <
-      chunks.length;
-      i++
-    ) {
-
-      statusText.innerText =
-        "🌍 Översätter del " +
-        (i + 1) +
-        " av " +
-        chunks.length +
-        "...";
-
-
-      const chunk =
-        chunks[i];
-
-
-      const url =
-
-        "https://api.mymemory.translated.net/get?q=" +
-
-        encodeURIComponent(
-          chunk
-        ) +
-
-        "&langpair=" +
-
-        encodeURIComponent(
-          from +
-          "|" +
-          to
-        );
-
-
-      const response =
-        await fetch(
-          url
-        );
 
 
       if (
-        !response.ok
+        cut <
+        maxLength * 0.55
       ) {
 
-        throw new Error(
-          "HTTP-fel från översättningstjänsten: " +
-          response.status
-        );
-      }
-
-
-      const data =
-        await response.json();
-
-
-      if (
-        !data.responseData ||
-        !data.responseData
-          .translatedText
-      ) {
-
-        throw new Error(
-          "Översättning saknas i API-svaret"
-        );
-      }
-
-
-      let translated =
-        data.responseData
-          .translatedText
-          .trim();
-
-
-      if (
-        translated
-          .toLowerCase() ===
-        chunk
-          .toLowerCase() &&
-
-        Array.isArray(
-          data.matches
-        )
-      ) {
-
-        const betterMatch =
-          data.matches.find(
-            item =>
-
-              item.translation &&
-
-              item.translation
-                .toLowerCase() !==
-              chunk
-                .toLowerCase()
+        cut =
+          remaining.lastIndexOf(
+            ". ",
+            maxLength
           );
 
 
         if (
-          betterMatch
+          cut >=
+          maxLength * 0.55
         ) {
-
-          translated =
-            betterMatch
-              .translation
-              .trim();
+          cut += 1;
         }
       }
 
 
-      translatedParts.push(
-        translated
+      if (
+        cut <
+        maxLength * 0.55
+      ) {
+
+        cut =
+          remaining.lastIndexOf(
+            " ",
+            maxLength
+          );
+      }
+
+
+      if (
+        cut <
+        maxLength * 0.4
+      ) {
+        cut = maxLength;
+      }
+
+
+      const part =
+        remaining
+          .slice(
+            0,
+            cut
+          )
+          .trim();
+
+
+      if (part) {
+        chunks.push(part);
+      }
+
+
+      remaining =
+        remaining
+          .slice(cut)
+          .trim();
+    }
+
+
+    if (remaining) {
+      chunks.push(
+        remaining
       );
     }
 
 
-    let translatedText =
-      translatedParts
-        .join("\n\n")
-        .replace(
-          /\s+([,.!?;:])/g,
-          "$1"
-        )
-        .replace(
-          /\n{3,}/g,
-          "\n\n"
-        )
-        .trim();
+    return chunks;
+  }
+
+
+  function decodeHTMLEntities(
+    text
+  ) {
+
+    const textarea =
+      document.createElement(
+        "textarea"
+      );
+
+    textarea.innerHTML =
+      text;
+
+    return textarea.value;
+  }
+
+
+  async function detectLanguage(
+    text
+  ) {
+
+    /*
+      MyMemory behöver ett källspråk.
+      Om användaren valt Auto gör vi
+      en enkel lokal bedömning.
+
+      Svenska tecken och vanliga småord
+      prioriteras.
+    */
+
+    const lower =
+      text.toLowerCase();
+
+
+    const swedishMatches =
+      (
+        lower.match(
+          /\b(och|att|det|som|för|med|den|ett|en|är|inte|till|på|av|har|om)\b/g
+        ) || []
+      ).length;
+
+
+    const englishMatches =
+      (
+        lower.match(
+          /\b(the|and|that|with|for|this|is|are|to|of|in|not|from|you)\b/g
+        ) || []
+      ).length;
 
 
     if (
-      !translatedText
+      /[åäö]/i.test(text) ||
+      swedishMatches >
+      englishMatches
     ) {
+      return "sv";
+    }
 
+
+    return "en";
+  }
+
+
+  async function translateChunk(
+    text,
+    source,
+    target
+  ) {
+
+    const url =
+      "https://api.mymemory.translated.net/get" +
+      "?q=" +
+      encodeURIComponent(text) +
+      "&langpair=" +
+      encodeURIComponent(
+        source + "|" + target
+      );
+
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET",
+          headers: {
+            "Accept":
+              "application/json"
+          }
+        }
+      );
+
+
+    if (!response.ok) {
       throw new Error(
-        "Ingen översättning kunde skapas"
+        "Översättningstjänsten svarade inte."
       );
     }
 
 
-    result.innerText =
-      translatedText;
+    const data =
+      await response.json();
 
 
-    statusText.innerText =
-      "✅ Översättning klar";
+    if (
+      !data ||
+      !data.responseData ||
+      typeof
+        data.responseData.translatedText
+        !== "string"
+    ) {
+
+      throw new Error(
+        "Översättningen kunde inte läsas."
+      );
+    }
 
 
-  } catch (error) {
+    return decodeHTMLEntities(
+      data.responseData.translatedText
+    );
+  }
 
-    console.error(
-      "TRANSLATION ERROR:",
-      error
+
+  async function translateText() {
+
+    if (isBusy) {
+      return;
+    }
+
+
+    const text =
+      inputText.value.trim();
+
+
+    if (!text) {
+
+      showStatus(
+        "Skriv text eller fotografera ett dokument först.",
+        "error"
+      );
+
+      return;
+    }
+
+
+    setBusy(true);
+
+    hideStatus();
+
+    resultBox.classList.remove(
+      "muted"
     );
 
-
-    result.innerText =
-
-      "Översättningen kunde inte genomföras.\n\n" +
-
-      error.message;
+    resultBox.textContent =
+      "Översätter...";
 
 
-    statusText.innerText =
-      "❌ Översättningen misslyckades";
+    try {
 
-  } finally {
+      let source =
+        sourceLanguage.value;
 
-    translateButton.disabled =
-      false;
 
-    cameraButton.disabled =
-      false;
+      const target =
+        targetLanguage.value;
+
+
+      if (
+        source === "auto"
+      ) {
+
+        source =
+          await detectLanguage(
+            text
+          );
+      }
+
+
+      if (
+        source === target
+      ) {
+
+        resultBox.textContent =
+          text;
+
+
+        showStatus(
+          "Källspråk och målspråk är samma.",
+          "success"
+        );
+
+
+        return;
+      }
+
+
+      const chunks =
+        splitText(
+          text,
+          420
+        );
+
+
+      const translated =
+        [];
+
+
+      for (
+        let i = 0;
+        i < chunks.length;
+        i++
+      ) {
+
+        showStatus(
+          "Översätter del " +
+          (i + 1) +
+          " av " +
+          chunks.length +
+          "..."
+        );
+
+
+        const part =
+          await translateChunk(
+            chunks[i],
+            source,
+            target
+          );
+
+
+        translated.push(
+          part
+        );
+      }
+
+
+      const finalText =
+        translated
+          .join("\n")
+          .trim();
+
+
+      if (!finalText) {
+        throw new Error(
+          "Ingen översättning returnerades."
+        );
+      }
+
+
+      resultBox.textContent =
+        finalText;
+
+
+      showStatus(
+        "Översättningen är klar.",
+        "success"
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+
+      resultBox.textContent =
+        "Översättningen kunde inte genomföras.";
+
+
+      showStatus(
+        error &&
+        error.message
+          ? error.message
+          : "Ett fel uppstod vid översättningen.",
+        "error"
+      );
+
+    }
+
+    finally {
+
+      setBusy(false);
+    }
   }
-}
+
+
+  /*
+  ==========================================================
+  KNAPPAR
+  ==========================================================
+  */
+
+  translateButton.addEventListener(
+    "click",
+    translateText
+  );
+
+
+  copyButton.addEventListener(
+    "click",
+    async function () {
+
+      const translatedText =
+        resultBox.textContent.trim();
+
+
+      const sourceText =
+        inputText.value.trim();
+
+
+      let textToCopy =
+        translatedText;
+
+
+      if (
+        !translatedText ||
+        translatedText ===
+          "Översättningen visas här." ||
+        translatedText ===
+          "Översätter..." ||
+        translatedText ===
+          "Översättningen kunde inte genomföras."
+      ) {
+
+        textToCopy =
+          sourceText;
+      }
+
+
+      if (!textToCopy) {
+
+        showStatus(
+          "Det finns ingen text att kopiera.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      try {
+
+        await navigator.clipboard.writeText(
+          textToCopy
+        );
+
+
+        showStatus(
+          "Texten är kopierad.",
+          "success"
+        );
+
+      }
+
+      catch (_) {
+
+        /*
+          Reservlösning för vissa Safari-versioner.
+        */
+
+        const temp =
+          document.createElement(
+            "textarea"
+          );
+
+
+        temp.value =
+          textToCopy;
+
+
+        temp.style.position =
+          "fixed";
+
+        temp.style.opacity =
+          "0";
+
+
+        document.body.appendChild(
+          temp
+        );
+
+
+        temp.focus();
+        temp.select();
+
+
+        try {
+          document.execCommand(
+            "copy"
+          );
+
+
+          showStatus(
+            "Texten är kopierad.",
+            "success"
+          );
+        }
+
+        catch (error) {
+
+          showStatus(
+            "Kunde inte kopiera texten.",
+            "error"
+          );
+        }
+
+
+        temp.remove();
+      }
+    }
+  );
+
+
+  clearButton.addEventListener(
+    "click",
+    function () {
+
+      if (isBusy) {
+        return;
+      }
+
+
+      inputText.value =
+        "";
+
+
+      resultBox.textContent =
+        "Översättningen visas här.";
+
+
+      resultBox.classList.add(
+        "muted"
+      );
+
+
+      imagePreview.removeAttribute(
+        "src"
+      );
+
+
+      previewWrap.style.display =
+        "none";
+
+
+      hideStatus();
+      hideProgress();
+
+
+      fileInput.value =
+        "";
+
+
+      cameraInput.value =
+        "";
+    }
+  );
+
+
+  /*
+  ==========================================================
+  START
+  ==========================================================
+  */
+
+  window.addEventListener(
+    "error",
+    function (event) {
+
+      console.error(
+        "Clario-fel:",
+        event.error ||
+        event.message
+      );
+    }
+  );
+
+
+  window.addEventListener(
+    "unhandledrejection",
+    function (event) {
+
+      console.error(
+        "Clario Promise-fel:",
+        event.reason
+      );
+    }
+  );
 
 </script>
 
