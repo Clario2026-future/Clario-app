@@ -1,1036 +1,154 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Clario</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
-    }
-
-    .app {
-      max-width: 600px;
-      margin: auto;
-      min-height: 100vh;
-      background: white;
-      padding-bottom: 40px;
-    }
-
-    header {
-      background: linear-gradient(
-        135deg,
-        #246bfd,
-        #59c4e8
-      );
-
-      color: white;
-      padding: 35px 20px 28px;
-      text-align: center;
-
-      border-radius: 0 0 30px 30px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 38px;
-    }
-
-    header p {
-      margin: 8px 0 0;
-      opacity: 0.95;
-    }
-
-    main {
-      padding: 25px 20px;
-    }
-
-    .language-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 25px;
-    }
-
-    label {
-      display: block;
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    select {
-      width: 100%;
-      padding: 16px;
-
-      border: 1px solid #d1d5db;
-      border-radius: 18px;
-
-      background: white;
-      font-size: 18px;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 190px;
-
-      resize: vertical;
-
-      padding: 18px;
-
-      font-size: 18px;
-      line-height: 1.45;
-
-      border: 1px solid #d1d5db;
-      border-radius: 20px;
-
-      outline: none;
-    }
-
-    textarea:focus {
-      border-color: #246bfd;
-    }
-
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 20px;
-
-      padding: 18px;
-
-      font-size: 20px;
-      font-weight: bold;
-
-      cursor: pointer;
-    }
-
-    .translate-btn {
-      margin-top: 18px;
-
-      background: #2f6ff7;
-      color: white;
-    }
-
-    .camera-btn {
-      margin-top: 18px;
-
-      background: #f1f5ff;
-      color: #246bfd;
-
-      border: 3px solid #246bfd;
-    }
-
-    #cameraInput {
-      display: none;
-    }
-
-    #preview {
-      width: 100%;
-
-      margin-top: 25px;
-
-      border-radius: 20px;
-
-      display: none;
-    }
-
-    .status {
-      margin-top: 20px;
-
-      text-align: center;
-
-      font-size: 17px;
-      font-weight: bold;
-
-      min-height: 24px;
-    }
-
-    .result-title {
-      margin-top: 28px;
-
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .result {
-      margin-top: 10px;
-
-      padding: 20px;
-
-      min-height: 120px;
-
-      background: #f4f7fb;
-
-      border-radius: 20px;
-
-      font-size: 18px;
-      line-height: 1.55;
-
-      white-space: pre-wrap;
-    }
-
-    .progress {
-      width: 100%;
-      height: 8px;
-
-      background: #e5e7eb;
-
-      border-radius: 10px;
-
-      margin-top: 15px;
-
-      overflow: hidden;
-
-      display: none;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-
-      background: #246bfd;
-
-      transition: width 0.2s;
-    }
-
-    canvas {
-      display: none;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="app">
-
-  <header>
-    <h1>Clario</h1>
-    <p>Fotografera, läs och översätt dokument</p>
-  </header>
-
-  <main>
-
-    <div class="language-row">
-
-      <div>
-        <label for="fromLang">
-          Från
-        </label>
-
-        <select id="fromLang">
-          <option value="sv" selected>
-            Svenska
-          </option>
-
-          <option value="en">
-            Engelska
-          </option>
-
-          <option value="de">
-            Tyska
-          </option>
-
-          <option value="fr">
-            Franska
-          </option>
-
-          <option value="es">
-            Spanska
-          </option>
-
-          <option value="it">
-            Italienska
-          </option>
-
-          <option value="ar">
-            Arabiska
-          </option>
-        </select>
-      </div>
-
-      <div>
-        <label for="toLang">
-          Till
-        </label>
-
-        <select id="toLang">
-          <option value="en" selected>
-            Engelska
-          </option>
-
-          <option value="sv">
-            Svenska
-          </option>
-
-          <option value="de">
-            Tyska
-          </option>
-
-          <option value="fr">
-            Franska
-          </option>
-
-          <option value="es">
-            Spanska
-          </option>
-
-          <option value="it">
-            Italienska
-          </option>
-
-          <option value="ar">
-            Arabiska
-          </option>
-        </select>
-      </div>
-
-    </div>
-
-    <label for="inputText">
-      Text eller dokument
-    </label>
-
-    <textarea
-      id="inputText"
-      placeholder="Skriv text här eller fotografera ett dokument..."
-    ></textarea>
-
-    <button
-      class="translate-btn"
-      onclick="translateText()"
-    >
-      🌍 Översätt
-    </button>
-
-    <button
-      class="camera-btn"
-      onclick="document.getElementById('cameraInput').click()"
-    >
-      📷 Ta kort på dokument
-    </button>
-
-    <input
-      id="cameraInput"
-      type="file"
-      accept="image/*"
-      capture="environment"
-    >
-
-    <div class="progress" id="progress">
-      <div
-        class="progress-bar"
-        id="progressBar"
-      ></div>
-    </div>
-
-    <div
-      id="statusText"
-      class="status"
-    ></div>
-
-    <img
-      id="preview"
-      alt="Dokument"
-    >
-
-    <canvas id="canvas"></canvas>
-
-    <div class="result-title">
-      Översättning
-    </div>
-
-    <div
-      id="result"
-      class="result"
-    ></div>
-
-  </main>
-
-</div>
-
-
 <script>
-
-const inputText =
-  document.getElementById("inputText");
-
-const result =
-  document.getElementById("result");
-
-const statusText =
-  document.getElementById("statusText");
-
-const cameraInput =
-  document.getElementById("cameraInput");
-
-const preview =
-  document.getElementById("preview");
-
-const canvas =
-  document.getElementById("canvas");
-
-const progress =
-  document.getElementById("progress");
-
-const progressBar =
-  document.getElementById("progressBar");
-
-
-cameraInput.addEventListener(
-  "change",
-  handleImage
-);
-
-
-async function handleImage(event) {
-
-  const file = event.target.files[0];
-
-  if (!file) {
-    return;
-  }
-
-  const imageURL =
-    URL.createObjectURL(file);
-
-  preview.src = imageURL;
-  preview.style.display = "block";
-
-  statusText.innerText =
-    "📄 Förbereder dokument...";
-
-  progress.style.display = "block";
-  progressBar.style.width = "5%";
-
-  try {
-
-    const processedImage =
-      await preprocessImage(imageURL);
-
-    statusText.innerText =
-      "🔎 Läser dokumentet...";
-
-    const {
-      data: { text }
-    } = await Tesseract.recognize(
-
-      processedImage,
-
-      "swe+eng",
-
-      {
-        logger: message => {
-
-          if (
-            message.status ===
-            "recognizing text"
-          ) {
-
-            const percent =
-              Math.round(
-                message.progress * 100
-              );
-
-            progressBar.style.width =
-              percent + "%";
-
-            statusText.innerText =
-              "🔎 Läser dokument... " +
-              percent +
-              "%";
-          }
-        }
-      }
-
-    );
-
-
-    let cleanedText =
-      cleanOCRText(text);
-
-
-    inputText.value =
-      cleanedText;
-
-
-    progressBar.style.width =
-      "100%";
-
-
-    statusText.innerText =
-      "✅ Dokumentet är avläst";
-
-
-    setTimeout(
-      () => {
-        progress.style.display =
-          "none";
-      },
-      700
-    );
-
-  } catch (error) {
-
-    console.error(
-      "OCR ERROR:",
-      error
-    );
-
-    statusText.innerText =
-      "❌ Kunde inte läsa dokumentet";
-
-    progress.style.display =
-      "none";
-  }
-}
-
-
-
 function preprocessImage(imageURL) {
 
-  return new Promise(
-    (resolve, reject) => {
+  return new Promise((resolve, reject) => {
 
-      const img =
-        new Image();
+    const img = new Image();
 
+    img.onload = () => {
 
-      img.onload = () => {
+      try {
 
-        try {
+        const ctx = canvas.getContext(
+          "2d",
+          { willReadFrequently: true }
+        );
 
-          const ctx =
-            canvas.getContext(
-              "2d",
-              {
-                willReadFrequently: true
-              }
-            );
+        /*
+          Förstora bilden så att liten text
+          blir lättare för OCR att läsa.
+        */
 
+        let scale = 2.5;
 
-          /*
-            Förstora dokumentet.
+        const maxWidth = 2800;
 
-            OCR fungerar ofta mycket
-            bättre när liten text
-            förstoras innan Tesseract
-            läser den.
-          */
+        if (img.width * scale > maxWidth) {
+          scale = maxWidth / img.width;
+        }
 
-          let scale = 2;
+        canvas.width =
+          Math.round(img.width * scale);
 
-          const maxWidth = 2400;
+        canvas.height =
+          Math.round(img.height * scale);
 
-          if (
-            img.width * scale >
-            maxWidth
-          ) {
+        /*
+          Vit bakgrund först.
+        */
 
-            scale =
-              maxWidth /
-              img.width;
-          }
+        ctx.fillStyle = "#ffffff";
 
+        ctx.fillRect(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
 
-          canvas.width =
-            Math.round(
-              img.width * scale
-            );
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
 
-          canvas.height =
-            Math.round(
-              img.height * scale
-            );
-
-
-          ctx.drawImage(
-            img,
+        const imageData =
+          ctx.getImageData(
             0,
             0,
             canvas.width,
             canvas.height
           );
 
+        const data =
+          imageData.data;
 
-          const imageData =
-            ctx.getImageData(
-              0,
-              0,
-              canvas.width,
-              canvas.height
-            );
+        /*
+          Dokumentbehandling:
+          - gråskala
+          - högre kontrast
+          - svart/vit tröskel
+        */
 
+        for (
+          let i = 0;
+          i < data.length;
+          i += 4
+        ) {
 
-          const data =
-            imageData.data;
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
 
+          let gray =
+            0.299 * r +
+            0.587 * g +
+            0.114 * b;
 
           /*
-            Gör bilden gråskalig,
-            ökar kontrasten och gör
-            dokumentbakgrunden ljusare.
+            Öka kontrasten.
           */
 
-          for (
-            let i = 0;
-            i < data.length;
-            i += 4
-          ) {
+          gray =
+            (gray - 128) * 1.7 + 128;
 
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
+          gray =
+            Math.max(
+              0,
+              Math.min(
+                255,
+                gray
+              )
+            );
 
+          /*
+            Gör bilden svart/vit.
+            Text blir svart och
+            papper blir vitt.
+          */
 
-            let gray =
-              0.299 * r +
-              0.587 * g +
-              0.114 * b;
+          const threshold = 175;
 
+          const value =
+            gray < threshold
+              ? 0
+              : 255;
 
-            /*
-              Kontrastökning
-            */
-
-            gray =
-              (gray - 128) *
-              1.45 +
-              128;
-
-
-            /*
-              Ljusa upp bakgrunden
-            */
-
-            if (gray > 210) {
-              gray = 255;
-            }
-
-
-            if (gray < 45) {
-              gray = 0;
-            }
-
-
-            gray =
-              Math.max(
-                0,
-                Math.min(
-                  255,
-                  gray
-                )
-              );
-
-
-            data[i] = gray;
-            data[i + 1] = gray;
-            data[i + 2] = gray;
-          }
-
-
-          ctx.putImageData(
-            imageData,
-            0,
-            0
-          );
-
-
-          resolve(
-            canvas.toDataURL(
-              "image/jpeg",
-              0.95
-            )
-          );
-
-        } catch (error) {
-
-          reject(error);
-
+          data[i] = value;
+          data[i + 1] = value;
+          data[i + 2] = value;
         }
-      };
 
-
-      img.onerror =
-        reject;
-
-
-      img.src =
-        imageURL;
-    }
-  );
-}
-
-
-
-function cleanOCRText(text) {
-
-  return text
-
-    /*
-      Ta bort konstiga tecken
-    */
-
-    .replace(
-      /[^\p{L}\p{N}\s.,:;!?()\/@+\-%–—]/gu,
-      ""
-    )
-
-    /*
-      Ta bort onödiga mellanslag
-    */
-
-    .replace(
-      /[ \t]+/g,
-      " "
-    )
-
-    /*
-      Ta bort för många tomrader
-    */
-
-    .replace(
-      /\n{3,}/g,
-      "\n\n"
-    )
-
-    /*
-      Ta bort mellanslag
-      före skiljetecken
-    */
-
-    .replace(
-      /\s+([,.!?;:])/g,
-      "$1"
-    )
-
-    .trim();
-}
-
-
-
-function splitText(
-  text,
-  maxLength = 450
-) {
-
-  const pieces = [];
-
-  let remaining =
-    text.trim();
-
-
-  while (
-    remaining.length >
-    maxLength
-  ) {
-
-    let cut =
-      remaining.lastIndexOf(
-        ". ",
-        maxLength
-      );
-
-
-    if (cut < 100) {
-
-      cut =
-        remaining.lastIndexOf(
-          "\n",
-          maxLength
-        );
-
-    }
-
-
-    if (cut < 100) {
-
-      cut =
-        remaining.lastIndexOf(
-          " ",
-          maxLength
-        );
-
-    }
-
-
-    if (cut < 100) {
-
-      cut =
-        maxLength;
-
-    }
-
-
-    pieces.push(
-      remaining
-        .slice(
+        ctx.putImageData(
+          imageData,
           0,
-          cut + 1
-        )
-        .trim()
-    );
+          0
+        );
 
+        /*
+          PNG är bättre än JPEG här,
+          eftersom JPEG kan skapa små
+          artefakter runt bokstäver.
+        */
 
-    remaining =
-      remaining
-        .slice(
-          cut + 1
-        )
-        .trim();
-  }
+        resolve(
+          canvas.toDataURL(
+            "image/png"
+          )
+        );
 
+      } catch (error) {
 
-  if (remaining) {
+        reject(error);
 
-    pieces.push(
-      remaining
-    );
+      }
+    };
 
-  }
+    img.onerror = reject;
 
-
-  return pieces;
+    img.src = imageURL;
+  });
 }
-
-
-
-async function translateText() {
-
-  const text =
-    inputText.value.trim();
-
-
-  const from =
-    document
-      .getElementById(
-        "fromLang"
-      )
-      .value;
-
-
-  const to =
-    document
-      .getElementById(
-        "toLang"
-      )
-      .value;
-
-
-  if (!text) {
-
-    alert(
-      "Skriv en text eller ta kort på ett dokument först."
-    );
-
-    return;
-  }
-
-
-  if (from === to) {
-
-    result.innerText =
-      text;
-
-    statusText.innerText =
-      "✅ Texten är redan på valt språk";
-
-    return;
-  }
-
-
-  statusText.innerText =
-    "🌍 Översätter...";
-
-
-  result.innerText =
-    "Översätter...";
-
-
-  try {
-
-    const chunks =
-      splitText(
-        text,
-        450
-      );
-
-
-    let translatedText =
-      "";
-
-
-    for (
-      const chunk of chunks
-    ) {
-
-      const url =
-
-        "https://api.mymemory.translated.net/get?q=" +
-
-        encodeURIComponent(
-          chunk
-        ) +
-
-        "&langpair=" +
-
-        encodeURIComponent(
-          from +
-          "|" +
-          to
-        );
-
-
-      const response =
-        await fetch(url);
-
-
-      if (!response.ok) {
-
-        throw new Error(
-          "HTTP-fel från översättningstjänsten: " +
-          response.status
-        );
-      }
-
-
-      const data =
-        await response.json();
-
-
-      if (
-        !data.responseData ||
-        !data.responseData
-          .translatedText
-      ) {
-
-        throw new Error(
-          "Översättning saknas i API-svaret"
-        );
-      }
-
-
-      let translated =
-
-        data.responseData
-          .translatedText
-          .trim();
-
-
-      if (
-        translated
-          .toLowerCase() ===
-          chunk
-            .toLowerCase() &&
-
-        Array.isArray(
-          data.matches
-        )
-      ) {
-
-        const betterMatch =
-
-          data.matches.find(
-            item =>
-
-              item.translation &&
-
-              item.translation
-                .toLowerCase() !==
-
-              chunk
-                .toLowerCase()
-          );
-
-
-        if (betterMatch) {
-
-          translated =
-            betterMatch
-              .translation
-              .trim();
-
-        }
-      }
-
-
-      translatedText +=
-        translated +
-        "\n\n";
-
-    }
-
-
-    translatedText =
-
-      translatedText
-
-        .replace(
-          /\s+([,.!?;:])/g,
-          "$1"
-        )
-
-        .replace(
-          /\n{3,}/g,
-          "\n\n"
-        )
-
-        .trim();
-
-
-    if (!translatedText) {
-
-      throw new Error(
-        "Ingen översättning kunde skapas"
-      );
-
-    }
-
-
-    result.innerText =
-      translatedText;
-
-
-    statusText.innerText =
-      "✅ Översättning klar";
-
-
-  } catch (error) {
-
-    console.error(
-      "TRANSLATION ERROR:",
-      error
-    );
-
-
-    result.innerText =
-
-      "Översättningen kunde inte genomföras.\n\n" +
-
-      error.message;
-
-
-    statusText.innerText =
-      "❌ Översättningen misslyckades";
-
-  }
-}
-
 </script>
-
-</body>
-</html>
