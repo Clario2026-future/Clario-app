@@ -121,7 +121,6 @@
 
     .translate-btn {
       margin-top: 18px;
-
       background: #2f6ff7;
       color: white;
     }
@@ -324,7 +323,10 @@
       capture="environment"
     >
 
-    <div class="progress" id="progress">
+    <div
+      class="progress"
+      id="progress"
+    >
       <div
         class="progress-bar"
         id="progressBar"
@@ -355,7 +357,6 @@
   </main>
 
 </div>
-
 
 <script>
 
@@ -415,59 +416,107 @@ async function handleImage(event) {
     "block";
 
   progressBar.style.width =
-    "5%";
+    "3%";
 
   try {
 
-    const processedImage =
-      await preprocessImage(
+    const parts =
+      await preprocessAndSplitImage(
         imageURL
       );
 
-    statusText.innerText =
-      "🔎 Läser dokumentet...";
+    let fullText =
+      "";
 
-    const {
-      data: { text }
-    } = await Tesseract.recognize(
+    const totalParts =
+      parts.length;
 
-      processedImage,
+    for (
+      let i = 0;
+      i < totalParts;
+      i++
+    ) {
 
-      "swe+eng",
+      const partNumber =
+        i + 1;
 
-      {
-        tessedit_pageseg_mode: 6,
-        preserve_interword_spaces: "1",
+      statusText.innerText =
+        "🔎 Läser del " +
+        partNumber +
+        " av " +
+        totalParts +
+        "...";
 
-        logger: message => {
+      const {
+        data: { text }
+      } = await Tesseract.recognize(
 
-          if (
-            message.status ===
-            "recognizing text"
-          ) {
+        parts[i],
 
-            const percent =
-              Math.round(
-                message.progress * 100
-              );
+        "swe+eng",
 
-            progressBar.style.width =
-              percent + "%";
+        {
+          tessedit_pageseg_mode: 6,
+          preserve_interword_spaces: "1",
 
-            statusText.innerText =
-              "🔎 Läser dokument... " +
-              percent +
-              "%";
+          logger: message => {
+
+            if (
+              message.status ===
+              "recognizing text"
+            ) {
+
+              const localProgress =
+                message.progress || 0;
+
+              const totalProgress =
+                (
+                  i +
+                  localProgress
+                ) /
+                totalParts;
+
+              const percent =
+                Math.round(
+                  totalProgress * 100
+                );
+
+              progressBar.style.width =
+                percent + "%";
+
+              statusText.innerText =
+                "🔎 Läser del " +
+                partNumber +
+                " av " +
+                totalParts +
+                " - " +
+                percent +
+                "%";
+            }
           }
         }
-      }
-    );
+      );
 
-    const cleanedText =
-      cleanOCRText(text);
+      const cleanedPart =
+        cleanOCRText(
+          text
+        );
+
+      if (
+        cleanedPart
+      ) {
+
+        fullText +=
+          cleanedPart +
+          "\n\n";
+      }
+    }
+
+    fullText =
+      fullText.trim();
 
     inputText.value =
-      cleanedText;
+      fullText;
 
     progressBar.style.width =
       "100%";
@@ -477,8 +526,10 @@ async function handleImage(event) {
 
     setTimeout(
       () => {
+
         progress.style.display =
           "none";
+
       },
       700
     );
@@ -500,7 +551,9 @@ async function handleImage(event) {
 
 
 
-function preprocessImage(imageURL) {
+function preprocessAndSplitImage(
+  imageURL
+) {
 
   return new Promise(
     (resolve, reject) => {
@@ -521,9 +574,7 @@ function preprocessImage(imageURL) {
             );
 
           /*
-            Förstora bilden.
-            Liten text blir då lättare
-            för Tesseract att läsa.
+            Förstora dokumentet.
           */
 
           let scale =
@@ -551,10 +602,6 @@ function preprocessImage(imageURL) {
             Math.round(
               img.height * scale
             );
-
-          /*
-            Vit bakgrund.
-          */
 
           ctx.fillStyle =
             "#ffffff";
@@ -586,10 +633,8 @@ function preprocessImage(imageURL) {
             imageData.data;
 
           /*
-            Gör dokumentet:
-            - gråskaligt
-            - högre kontrast
-            - svart/vitt
+            Gråskala + kontrast +
+            svart/vit dokumentbild.
           */
 
           for (
@@ -612,13 +657,9 @@ function preprocessImage(imageURL) {
               0.587 * g +
               0.114 * b;
 
-            /*
-              Öka kontrasten.
-            */
-
             gray =
               (gray - 128) *
-              1.7 +
+              1.65 +
               128;
 
             gray =
@@ -630,15 +671,12 @@ function preprocessImage(imageURL) {
                 )
               );
 
-            /*
-              Svart/vit tröskel.
-            */
-
             const threshold =
-              175;
+              178;
 
             const value =
-              gray < threshold
+              gray <
+              threshold
                 ? 0
                 : 255;
 
@@ -659,14 +697,150 @@ function preprocessImage(imageURL) {
           );
 
           /*
-            PNG ger renare bokstäver
-            än JPEG för OCR.
+            Dela lång bild i flera delar.
+
+            Lite överlapp används så
+            att text nära en skarv inte
+            kapas mitt i en rad.
           */
 
+          const parts =
+            [];
+
+          const imageHeight =
+            canvas.height;
+
+          const imageWidth =
+            canvas.width;
+
+          let numberOfParts =
+            3;
+
+          if (
+            imageHeight >
+            imageWidth * 3
+          ) {
+
+            numberOfParts =
+              4;
+          }
+
+          if (
+            imageHeight >
+            imageWidth * 4
+          ) {
+
+            numberOfParts =
+              5;
+          }
+
+          const overlap =
+            Math.round(
+              imageHeight * 0.025
+            );
+
+          const basePartHeight =
+            Math.ceil(
+              imageHeight /
+              numberOfParts
+            );
+
+          for (
+            let partIndex = 0;
+            partIndex <
+            numberOfParts;
+            partIndex++
+          ) {
+
+            let startY =
+              partIndex *
+              basePartHeight;
+
+            let endY =
+              Math.min(
+                imageHeight,
+                startY +
+                basePartHeight
+              );
+
+            if (
+              partIndex > 0
+            ) {
+
+              startY =
+                Math.max(
+                  0,
+                  startY -
+                  overlap
+                );
+            }
+
+            if (
+              partIndex <
+              numberOfParts - 1
+            ) {
+
+              endY =
+                Math.min(
+                  imageHeight,
+                  endY +
+                  overlap
+                );
+            }
+
+            const partHeight =
+              endY -
+              startY;
+
+            const partCanvas =
+              document.createElement(
+                "canvas"
+              );
+
+            partCanvas.width =
+              imageWidth;
+
+            partCanvas.height =
+              partHeight;
+
+            const partCtx =
+              partCanvas.getContext(
+                "2d"
+              );
+
+            partCtx.fillStyle =
+              "#ffffff";
+
+            partCtx.fillRect(
+              0,
+              0,
+              imageWidth,
+              partHeight
+            );
+
+            partCtx.drawImage(
+              canvas,
+
+              0,
+              startY,
+              imageWidth,
+              partHeight,
+
+              0,
+              0,
+              imageWidth,
+              partHeight
+            );
+
+            parts.push(
+              partCanvas.toDataURL(
+                "image/png"
+              )
+            );
+          }
+
           resolve(
-            canvas.toDataURL(
-              "image/png"
-            )
+            parts
           );
 
         } catch (error) {
@@ -914,7 +1088,7 @@ async function translateText() {
 
       if (
         translated.toLowerCase() ===
-          chunk.toLowerCase() &&
+        chunk.toLowerCase() &&
 
         Array.isArray(
           data.matches
@@ -929,7 +1103,6 @@ async function translateText() {
 
               item.translation
                 .toLowerCase() !==
-
               chunk
                 .toLowerCase()
           );
