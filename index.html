@@ -1,343 +1,433 @@
 <!DOCTYPE html>
-
 <html lang="sv">
-
 <head>
-
-  <meta charset="UTF-8" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clario</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
 
     body {
-
       margin: 0;
-
       font-family: Arial, sans-serif;
-
       background: #f4f7fb;
-
       color: #1f2937;
-
     }
 
     .app {
-
       max-width: 600px;
-
-      margin: 0 auto;
-
-      padding: 24px 18px;
-
+      margin: auto;
+      min-height: 100vh;
+      background: white;
+      padding-bottom: 40px;
     }
 
-    h1 {
-
+    header {
+      background: linear-gradient(135deg, #246bfd, #59c4e8);
+      color: white;
+      padding: 35px 20px 28px;
       text-align: center;
-
-      color: #2563eb;
-
-      margin-bottom: 6px;
-
+      border-radius: 0 0 30px 30px;
     }
 
-    .subtitle {
+    header h1 {
+      margin: 0;
+      font-size: 38px;
+    }
 
-      text-align: center;
+    header p {
+      margin: 8px 0 0;
+      opacity: 0.95;
+    }
 
-      color: #6b7280;
-
-      margin-bottom: 28px;
-
+    .container {
+      padding: 22px;
     }
 
     .card {
-
       background: white;
-
-      border-radius: 18px;
-
-      padding: 20px;
-
-      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-
+      border-radius: 20px;
+      padding: 18px;
       margin-bottom: 18px;
-
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
     }
 
-    button {
-
-      width: 100%;
-
-      border: none;
-
-      border-radius: 14px;
-
-      padding: 16px;
-
-      font-size: 17px;
-
+    label {
+      display: block;
+      margin-bottom: 8px;
       font-weight: bold;
-
-      cursor: pointer;
-
-      margin-top: 10px;
-
     }
 
-    .camera {
-
-      background: #2563eb;
-
-      color: white;
-
-    }
-
-    .translate {
-
-      background: #16a34a;
-
-      color: white;
-
-    }
-
-    .simple {
-
-      background: #f59e0b;
-
-      color: white;
-
-    }
-
-    select {
-
+    select,
+    textarea {
       width: 100%;
-
-      padding: 14px;
-
-      border-radius: 12px;
-
-      border: 1px solid #d1d5db;
-
-      font-size: 16px;
-
-      margin-top: 8px;
-
-    }
-
-    img {
-
-      width: 100%;
-
-      margin-top: 15px;
-
+      border: 1px solid #d9e0ea;
       border-radius: 14px;
-
-      display: none;
-
+      padding: 14px;
+      font-size: 16px;
+      background: #fff;
     }
 
     textarea {
-
-      width: 100%;
-
-      min-height: 180px;
-
-      box-sizing: border-box;
-
-      border-radius: 12px;
-
-      border: 1px solid #d1d5db;
-
-      padding: 14px;
-
-      font-size: 16px;
-
+      min-height: 140px;
       resize: vertical;
-
     }
 
-    #fileInput {
+    .languages {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
 
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 15px;
+      padding: 16px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .translate-btn {
+      background: #246bfd;
+      color: white;
+    }
+
+    .camera-btn {
+      background: #eef4ff;
+      color: #246bfd;
+      border: 2px solid #246bfd;
+    }
+
+    .clear-btn {
+      background: #f1f3f5;
+      color: #444;
+    }
+
+    #imageInput {
       display: none;
+    }
 
+    #preview {
+      width: 100%;
+      margin-top: 15px;
+      border-radius: 14px;
+      display: none;
     }
 
     .status {
-
       text-align: center;
-
-      color: #6b7280;
-
       margin-top: 12px;
-
+      font-size: 14px;
+      color: #666;
+      min-height: 20px;
     }
 
-  </style>
+    .result {
+      min-height: 120px;
+      padding: 15px;
+      background: #f6f9ff;
+      border-radius: 14px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
 
+    .logo {
+      font-size: 45px;
+      margin-bottom: 5px;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #777;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 
 <body>
 
-  <div class="app">
+<div class="app">
 
+  <header>
+    <div class="logo">🌍</div>
     <h1>Clario</h1>
+    <p>Förstå dokument. Oavsett språk.</p>
+  </header>
 
-    <div class="subtitle">Förstå dokument på ditt språk</div>
-
-    <div class="card">
-
-      <h2>1. Ta kort på dokumentet</h2>
-
-      <input
-
-        type="file"
-
-        id="fileInput"
-
-        accept="image/*"
-
-        capture="environment"
-
-      />
-
-      <button class="camera" onclick="openCamera()">
-
-        📷 Ta kort
-
-      </button>
-
-      <img id="preview" alt="Förhandsvisning" />
-
-    </div>
+  <div class="container">
 
     <div class="card">
 
-      <h2>2. Välj språk</h2>
+      <div class="languages">
 
-      <select id="language">
+        <div>
+          <label>Från</label>
+          <select id="fromLang">
+            <option value="sv">Svenska</option>
+            <option value="en">Engelska</option>
+            <option value="ar">Arabiska</option>
+            <option value="de">Tyska</option>
+            <option value="fr">Franska</option>
+            <option value="es">Spanska</option>
+            <option value="it">Italienska</option>
+            <option value="tr">Turkiska</option>
+            <option value="pl">Polska</option>
+            <option value="uk">Ukrainska</option>
+          </select>
+        </div>
 
-        <option value="English">Engelska</option>
+        <div>
+          <label>Till</label>
+          <select id="toLang">
+            <option value="en">Engelska</option>
+            <option value="sv" selected>Svenska</option>
+            <option value="ar">Arabiska</option>
+            <option value="de">Tyska</option>
+            <option value="fr">Franska</option>
+            <option value="es">Spanska</option>
+            <option value="it">Italienska</option>
+            <option value="tr">Turkiska</option>
+            <option value="pl">Polska</option>
+            <option value="uk">Ukrainska</option>
+          </select>
+        </div>
 
-        <option value="Arabic">Arabiska</option>
+      </div>
 
-        <option value="Somali">Somaliska</option>
-
-        <option value="Persian">Persiska</option>
-
-        <option value="Ukrainian">Ukrainska</option>
-
-        <option value="Spanish">Spanska</option>
-
-        <option value="German">Tyska</option>
-
-        <option value="French">Franska</option>
-
-      </select>
-
-      <button class="translate" onclick="translateDocument()">
-
-        🌍 Översätt dokument
-
-      </button>
-
-      <button class="simple" onclick="simplifySwedish()">
-
-        ✨ Förklara på enklare svenska
-
-      </button>
-
-      <p class="status" id="status"></p>
-
-    </div>
-
-    <div class="card">
-
-      <h2>Resultat</h2>
+      <label>Text eller dokument</label>
 
       <textarea
-
-        id="result"
-
-        placeholder="Den översatta eller förenklade texten visas här..."
-
+        id="inputText"
+        placeholder="Skriv eller klistra in text här..."
       ></textarea>
 
+      <button class="translate-btn" onclick="translateText()">
+        🌍 Översätt
+      </button>
+
+      <button class="camera-btn" onclick="openCamera()">
+        📷 Ta kort på dokument
+      </button>
+
+      <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+        capture="environment"
+      >
+
+      <img id="preview">
+
+      <div class="status" id="status"></div>
+
+    </div>
+
+
+    <div class="card">
+
+      <label>Översättning</label>
+
+      <div id="result" class="result">
+        Din översättning visas här.
+      </div>
+
+      <button class="clear-btn" onclick="clearAll()">
+        Rensa
+      </button>
+
+    </div>
+
+    <div class="small">
+      Clario – enklare dokument för alla
     </div>
 
   </div>
 
-  <script>
+</div>
 
-    const fileInput = document.getElementById("fileInput");
 
-    const preview = document.getElementById("preview");
+<script>
 
-    const statusText = document.getElementById("status");
+const inputText = document.getElementById("inputText");
+const result = document.getElementById("result");
+const statusText = document.getElementById("status");
+const imageInput = document.getElementById("imageInput");
+const preview = document.getElementById("preview");
 
-    function openCamera() {
 
-      fileInput.click();
+function openCamera() {
+  imageInput.click();
+}
 
+
+imageInput.addEventListener("change", async function(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+
+  statusText.innerText = "📄 Läser text från bilden...";
+
+  try {
+
+    const data = await Tesseract.recognize(
+      file,
+      "swe+eng"
+    );
+
+    const text = data.data.text.trim();
+
+    if (!text) {
+      statusText.innerText = "Ingen text kunde hittas.";
+      return;
     }
 
-    fileInput.addEventListener("change", function () {
+    inputText.value = text;
 
-      const file = fileInput.files[0];
+    statusText.innerText = "✅ Texten är inläst. Tryck på Översätt.";
 
-      if (!file) return;
+  } catch (error) {
 
-      preview.src = URL.createObjectURL(file);
+    console.error(error);
 
-      preview.style.display = "block";
+    statusText.innerText =
+      "Kunde inte läsa bilden. Prova med ett tydligare foto.";
 
-      statusText.textContent = "Bild vald ✓";
+  }
 
-    });
+});
 
-    function translateDocument() {
 
-      if (!fileInput.files[0]) {
+async function translateText() {
 
-        alert("Ta först ett kort på dokumentet.");
+  const text = inputText.value.trim();
 
-        return;
+  const from = document.getElementById("fromLang").value;
+  const to = document.getElementById("toLang").value;
 
+  if (!text) {
+    alert("Skriv en text eller ta kort på ett dokument först.");
+    return;
+  }
+
+  statusText.innerText = "🌍 Översätter...";
+  result.innerText = "Översätter...";
+
+  try {
+
+    const chunks = splitText(text, 450);
+
+    let translatedText = "";
+
+    for (const chunk of chunks) {
+
+      const url =
+        "https://api.mymemory.translated.net/get?q=" +
+        encodeURIComponent(chunk) +
+        "&langpair=" +
+        from +
+        "|" +
+        to;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error("Translation error");
       }
 
-      const language = document.getElementById("language").value;
+      const data = await response.json();
 
-      statusText.textContent =
-
-        "Bilden är klar. Nästa steg är att koppla AI-översättningen till " +
-
-        language +
-
-        ".";
-
-    }
-
-    function simplifySwedish() {
-
-      if (!fileInput.files[0]) {
-
-        alert("Ta först ett kort på dokumentet.");
-
-        return;
-
+      if (!data.responseData) {
+        throw new Error("No translation");
       }
 
-      statusText.textContent =
-
-        "Bilden är klar. Nästa steg är att koppla AI för enklare svenska.";
+      translatedText +=
+        data.responseData.translatedText + "\n";
 
     }
 
-  </script>
+    result.innerText = translatedText.trim();
+
+    statusText.innerText = "✅ Översättning klar";
+
+  } catch (error) {
+
+    console.error(error);
+
+    result.innerText =
+      "Översättningen kunde inte genomföras just nu.";
+
+    statusText.innerText =
+      "❌ Ett fel uppstod. Försök igen.";
+
+  }
+
+}
+
+
+function splitText(text, maxLength) {
+
+  const chunks = [];
+
+  let current = "";
+
+  const words = text.split(" ");
+
+  for (const word of words) {
+
+    if ((current + " " + word).length > maxLength) {
+
+      chunks.push(current.trim());
+      current = word;
+
+    } else {
+
+      current += " " + word;
+
+    }
+
+  }
+
+  if (current.trim()) {
+    chunks.push(current.trim());
+  }
+
+  return chunks;
+
+}
+
+
+function clearAll() {
+
+  inputText.value = "";
+
+  result.innerText =
+    "Din översättning visas här.";
+
+  statusText.innerText = "";
+
+  preview.style.display = "none";
+
+  preview.src = "";
+
+  imageInput.value = "";
+
+}
+
+</script>
 
 </body>
-
 </html>
