@@ -42,7 +42,6 @@
       color: white;
       padding: 35px 20px 28px;
       text-align: center;
-
       border-radius: 0 0 30px 30px;
     }
 
@@ -119,6 +118,11 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
     .translate-btn {
       margin-top: 18px;
       background: #2f6ff7;
@@ -174,6 +178,7 @@
       line-height: 1.55;
 
       white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
 
     .progress {
@@ -303,6 +308,7 @@
     ></textarea>
 
     <button
+      id="translateButton"
       class="translate-btn"
       onclick="translateText()"
     >
@@ -310,6 +316,7 @@
     </button>
 
     <button
+      id="cameraButton"
       class="camera-btn"
       onclick="document.getElementById('cameraInput').click()"
     >
@@ -384,6 +391,12 @@ const progress =
 const progressBar =
   document.getElementById("progressBar");
 
+const translateButton =
+  document.getElementById("translateButton");
+
+const cameraButton =
+  document.getElementById("cameraButton");
+
 
 cameraInput.addEventListener(
   "change",
@@ -409,6 +422,18 @@ async function handleImage(event) {
   preview.style.display =
     "block";
 
+  inputText.value =
+    "";
+
+  result.innerText =
+    "";
+
+  cameraButton.disabled =
+    true;
+
+  translateButton.disabled =
+    true;
+
   statusText.innerText =
     "📄 Förbereder dokument...";
 
@@ -416,7 +441,7 @@ async function handleImage(event) {
     "block";
 
   progressBar.style.width =
-    "3%";
+    "2%";
 
   try {
 
@@ -425,8 +450,8 @@ async function handleImage(event) {
         imageURL
       );
 
-    let fullText =
-      "";
+    let allParts =
+      [];
 
     const totalParts =
       parts.length;
@@ -447,82 +472,140 @@ async function handleImage(event) {
         totalParts +
         "...";
 
-      const {
-        data: { text }
-      } = await Tesseract.recognize(
 
-        parts[i],
+      const firstResult =
+        await Tesseract.recognize(
+          parts[i],
+          "swe+eng",
+          {
+            tessedit_pageseg_mode: 6,
+            preserve_interword_spaces: "1",
 
-        "swe+eng",
+            logger: message => {
 
-        {
-          tessedit_pageseg_mode: 6,
-          preserve_interword_spaces: "1",
+              if (
+                message.status ===
+                "recognizing text"
+              ) {
 
-          logger: message => {
+                const localProgress =
+                  message.progress || 0;
 
-            if (
-              message.status ===
-              "recognizing text"
-            ) {
+                const totalProgress =
+                  (
+                    i +
+                    localProgress
+                  ) /
+                  totalParts;
 
-              const localProgress =
-                message.progress || 0;
+                const percent =
+                  Math.min(
+                    94,
+                    Math.round(
+                      totalProgress *
+                      94
+                    )
+                  );
 
-              const totalProgress =
-                (
-                  i +
-                  localProgress
-                ) /
-                totalParts;
+                progressBar.style.width =
+                  percent + "%";
 
-              const percent =
-                Math.round(
-                  totalProgress * 100
-                );
-
-              progressBar.style.width =
-                percent + "%";
-
-              statusText.innerText =
-                "🔎 Läser del " +
-                partNumber +
-                " av " +
-                totalParts +
-                " - " +
-                percent +
-                "%";
+                statusText.innerText =
+                  "🔎 Läser del " +
+                  partNumber +
+                  " av " +
+                  totalParts +
+                  " - " +
+                  percent +
+                  "%";
+              }
             }
           }
-        }
-      );
-
-      const cleanedPart =
-        cleanOCRText(
-          text
         );
 
+
+      statusText.innerText =
+        "🔍 Kontrollerar del " +
+        partNumber +
+        " av " +
+        totalParts +
+        "...";
+
+
+      const secondResult =
+        await Tesseract.recognize(
+          parts[i],
+          "swe+eng",
+          {
+            tessedit_pageseg_mode: 3,
+            preserve_interword_spaces: "1"
+          }
+        );
+
+
+      const firstText =
+        cleanOCRText(
+          firstResult.data.text
+        );
+
+      const secondText =
+        cleanOCRText(
+          secondResult.data.text
+        );
+
+
+      const chosenText =
+        chooseBestOCR(
+          firstText,
+          secondText
+        );
+
+
       if (
-        cleanedPart
+        chosenText
       ) {
 
-        fullText +=
-          cleanedPart +
-          "\n\n";
+        allParts.push(
+          chosenText
+        );
       }
     }
 
+
+    let fullText =
+      mergeOCRParts(
+        allParts
+      );
+
+
     fullText =
-      fullText.trim();
+      cleanOCRText(
+        fullText
+      );
+
 
     inputText.value =
       fullText;
 
+
     progressBar.style.width =
       "100%";
 
-    statusText.innerText =
-      "✅ Dokumentet är avläst";
+
+    if (
+      fullText.length >
+      10
+    ) {
+
+      statusText.innerText =
+        "✅ Dokumentet är avläst";
+
+    } else {
+
+      statusText.innerText =
+        "⚠️ Väldigt lite text hittades";
+    }
+
 
     setTimeout(
       () => {
@@ -533,6 +616,7 @@ async function handleImage(event) {
       },
       700
     );
+
 
   } catch (error) {
 
@@ -546,6 +630,21 @@ async function handleImage(event) {
 
     progress.style.display =
       "none";
+
+  } finally {
+
+    cameraButton.disabled =
+      false;
+
+    translateButton.disabled =
+      false;
+
+    cameraInput.value =
+      "";
+
+    URL.revokeObjectURL(
+      imageURL
+    );
   }
 }
 
@@ -561,6 +660,7 @@ function preprocessAndSplitImage(
       const img =
         new Image();
 
+
       img.onload = () => {
 
         try {
@@ -573,15 +673,14 @@ function preprocessAndSplitImage(
               }
             );
 
-          /*
-            Förstora dokumentet.
-          */
 
           let scale =
-            2.5;
+            2;
+
 
           const maxWidth =
-            2800;
+            2600;
+
 
           if (
             img.width * scale >
@@ -593,18 +692,24 @@ function preprocessAndSplitImage(
               img.width;
           }
 
+
           canvas.width =
             Math.round(
-              img.width * scale
+              img.width *
+              scale
             );
+
 
           canvas.height =
             Math.round(
-              img.height * scale
+              img.height *
+              scale
             );
+
 
           ctx.fillStyle =
             "#ffffff";
+
 
           ctx.fillRect(
             0,
@@ -612,6 +717,7 @@ function preprocessAndSplitImage(
             canvas.width,
             canvas.height
           );
+
 
           ctx.drawImage(
             img,
@@ -621,6 +727,7 @@ function preprocessAndSplitImage(
             canvas.height
           );
 
+
           const imageData =
             ctx.getImageData(
               0,
@@ -629,13 +736,10 @@ function preprocessAndSplitImage(
               canvas.height
             );
 
+
           const data =
             imageData.data;
 
-          /*
-            Gråskala + kontrast +
-            svart/vit dokumentbild.
-          */
 
           for (
             let i = 0;
@@ -652,15 +756,18 @@ function preprocessAndSplitImage(
             const b =
               data[i + 2];
 
+
             let gray =
               0.299 * r +
               0.587 * g +
               0.114 * b;
 
+
             gray =
               (gray - 128) *
-              1.65 +
+              1.35 +
               128;
+
 
             gray =
               Math.max(
@@ -671,24 +778,26 @@ function preprocessAndSplitImage(
                 )
               );
 
-            const threshold =
-              178;
 
-            const value =
-              gray <
-              threshold
-                ? 0
-                : 255;
+            if (
+              gray > 225
+            ) {
+
+              gray =
+                255;
+            }
+
 
             data[i] =
-              value;
+              gray;
 
             data[i + 1] =
-              value;
+              gray;
 
             data[i + 2] =
-              value;
+              gray;
           }
+
 
           ctx.putImageData(
             imageData,
@@ -696,54 +805,69 @@ function preprocessAndSplitImage(
             0
           );
 
-          /*
-            Dela lång bild i flera delar.
-
-            Lite överlapp används så
-            att text nära en skarv inte
-            kapas mitt i en rad.
-          */
 
           const parts =
             [];
 
+
           const imageHeight =
             canvas.height;
+
 
           const imageWidth =
             canvas.width;
 
+
           let numberOfParts =
-            3;
+            2;
+
 
           if (
             imageHeight >
-            imageWidth * 3
+            imageWidth *
+            1.8
+          ) {
+
+            numberOfParts =
+              3;
+          }
+
+
+          if (
+            imageHeight >
+            imageWidth *
+            3
           ) {
 
             numberOfParts =
               4;
           }
 
+
           if (
             imageHeight >
-            imageWidth * 4
+            imageWidth *
+            4.5
           ) {
 
             numberOfParts =
               5;
           }
 
+
           const overlap =
             Math.round(
-              imageHeight * 0.025
+              imageHeight *
+              0.012
             );
+
 
           const basePartHeight =
             Math.ceil(
               imageHeight /
               numberOfParts
             );
+
 
           for (
             let partIndex = 0;
@@ -756,12 +880,14 @@ function preprocessAndSplitImage(
               partIndex *
               basePartHeight;
 
+
             let endY =
               Math.min(
                 imageHeight,
                 startY +
                 basePartHeight
               );
+
 
             if (
               partIndex > 0
@@ -774,6 +900,7 @@ function preprocessAndSplitImage(
                   overlap
                 );
             }
+
 
             if (
               partIndex <
@@ -788,28 +915,35 @@ function preprocessAndSplitImage(
                 );
             }
 
+
             const partHeight =
               endY -
               startY;
+
 
             const partCanvas =
               document.createElement(
                 "canvas"
               );
 
+
             partCanvas.width =
               imageWidth;
 
+
             partCanvas.height =
               partHeight;
+
 
             const partCtx =
               partCanvas.getContext(
                 "2d"
               );
 
+
             partCtx.fillStyle =
               "#ffffff";
+
 
             partCtx.fillRect(
               0,
@@ -817,6 +951,7 @@ function preprocessAndSplitImage(
               imageWidth,
               partHeight
             );
+
 
             partCtx.drawImage(
               canvas,
@@ -832,28 +967,33 @@ function preprocessAndSplitImage(
               partHeight
             );
 
+
             parts.push(
               partCanvas.toDataURL(
-                "image/png"
+                "image/jpeg",
+                0.95
               )
             );
           }
 
+
           resolve(
             parts
           );
+
 
         } catch (error) {
 
           reject(
             error
           );
-
         }
       };
 
+
       img.onerror =
         reject;
+
 
       img.src =
         imageURL;
@@ -865,29 +1005,444 @@ function preprocessAndSplitImage(
 
 function cleanOCRText(text) {
 
-  return text
+  if (!text) {
+    return "";
+  }
 
-    .replace(
-      /[^\p{L}\p{N}\s.,:;!?()\/@+\-%–—]/gu,
-      ""
-    )
 
-    .replace(
-      /[ \t]+/g,
-      " "
-    )
+  let cleaned =
+    text
 
+      .replace(
+        /\r/g,
+        ""
+      )
+
+      .replace(
+        /[|¦]+/g,
+        "I"
+      )
+
+      .replace(
+        /[“”]/g,
+        '"'
+      )
+
+      .replace(
+        /[‘’]/g,
+        "'"
+      )
+
+      .replace(
+        /[ \t]+/g,
+        " "
+      )
+
+      .replace(
+        / +\n/g,
+        "\n"
+      )
+
+      .replace(
+        /\n +/g,
+        "\n"
+      )
+
+      .replace(
+        /\s+([,.!?;:])/g,
+        "$1"
+      );
+
+
+  let lines =
+    cleaned
+      .split("\n")
+      .map(
+        line =>
+          line.trim()
+      )
+      .filter(
+        line =>
+          line.length > 0
+      );
+
+
+  lines =
+    lines.filter(
+      line => {
+
+        if (
+          line.length <= 2 &&
+          !/\d/.test(line)
+        ) {
+
+          return false;
+        }
+
+
+        const letters =
+          (
+            line.match(
+              /\p{L}/gu
+            ) ||
+            []
+          ).length;
+
+
+        const numbers =
+          (
+            line.match(
+              /\d/g
+            ) ||
+            []
+          ).length;
+
+
+        const strange =
+          (
+            line.match(
+              /[^\p{L}\p{N}\s.,:;!?()\/@+\-%–—'"#&]/gu
+            ) ||
+            []
+          ).length;
+
+
+        if (
+          strange >
+          line.length *
+          0.25
+        ) {
+
+          return false;
+        }
+
+
+        const words =
+          line
+            .split(
+              /\s+/
+            )
+            .filter(Boolean);
+
+
+        const tinyWords =
+          words.filter(
+            word =>
+              word.length <= 2
+          ).length;
+
+
+        if (
+          words.length >= 5 &&
+          tinyWords /
+          words.length >
+          0.7 &&
+          numbers === 0
+        ) {
+
+          return false;
+        }
+
+
+        if (
+          letters === 0 &&
+          numbers === 0
+        ) {
+
+          return false;
+        }
+
+
+        return true;
+      }
+    );
+
+
+  const finalLines =
+    [];
+
+
+  let previous =
+    "";
+
+
+  for (
+    const line of lines
+  ) {
+
+    const normalized =
+      line
+        .toLowerCase()
+        .replace(
+          /\s+/g,
+          " "
+        );
+
+
+    if (
+      normalized ===
+      previous
+    ) {
+
+      continue;
+    }
+
+
+    finalLines.push(
+      line
+    );
+
+
+    previous =
+      normalized;
+  }
+
+
+  return finalLines
+    .join("\n")
     .replace(
       /\n{3,}/g,
       "\n\n"
     )
-
-    .replace(
-      /\s+([,.!?;:])/g,
-      "$1"
-    )
-
     .trim();
+}
+
+
+
+function chooseBestOCR(
+  first,
+  second
+) {
+
+  const scoreText =
+    text => {
+
+      if (!text) {
+        return 0;
+      }
+
+
+      const letters =
+        (
+          text.match(
+            /\p{L}/gu
+          ) ||
+          []
+        ).length;
+
+
+      const digits =
+        (
+          text.match(
+            /\d/g
+          ) ||
+          []
+        ).length;
+
+
+      const usefulLines =
+        text
+          .split("\n")
+          .filter(
+            line =>
+              line.trim()
+                .length >=
+              4
+          )
+          .length;
+
+
+      const suspiciousLines =
+        text
+          .split("\n")
+          .filter(
+            line => {
+
+              const words =
+                line
+                  .trim()
+                  .split(
+                    /\s+/
+                  )
+                  .filter(Boolean);
+
+
+              if (
+                words.length <
+                4
+              ) {
+
+                return false;
+              }
+
+
+              const shortWords =
+                words.filter(
+                  word =>
+                    word.length <= 2
+                ).length;
+
+
+              return (
+                shortWords /
+                words.length >
+                0.7
+              );
+            }
+          )
+          .length;
+
+
+      return (
+        letters +
+        digits *
+        0.8 +
+        usefulLines *
+        6 -
+        suspiciousLines *
+        15
+      );
+    };
+
+
+  const scoreFirst =
+    scoreText(
+      first
+    );
+
+
+  const scoreSecond =
+    scoreText(
+      second
+    );
+
+
+  return scoreSecond >
+    scoreFirst
+      ? second
+      : first;
+}
+
+
+
+function normalizeOCRLine(
+  line
+) {
+
+  return line
+    .toLowerCase()
+    .replace(
+      /[^\p{L}\p{N}]/gu,
+      ""
+    );
+}
+
+
+
+function mergeOCRParts(
+  parts
+) {
+
+  const resultLines =
+    [];
+
+
+  for (
+    const part of parts
+  ) {
+
+    const lines =
+      part
+        .split("\n")
+        .map(
+          line =>
+            line.trim()
+        )
+        .filter(Boolean);
+
+
+    for (
+      const line of lines
+    ) {
+
+      const normalized =
+        normalizeOCRLine(
+          line
+        );
+
+
+      if (
+        normalized.length <
+        2
+      ) {
+
+        continue;
+      }
+
+
+      const recentLines =
+        resultLines.slice(
+          -10
+        );
+
+
+      const alreadyExists =
+        recentLines.some(
+          oldLine => {
+
+            const oldNormalized =
+              normalizeOCRLine(
+                oldLine
+              );
+
+
+            if (
+              normalized ===
+              oldNormalized
+            ) {
+
+              return true;
+            }
+
+
+            if (
+              normalized.length >= 15 &&
+              oldNormalized.length >= 15
+            ) {
+
+              if (
+                normalized.includes(
+                  oldNormalized
+                ) ||
+                oldNormalized.includes(
+                  normalized
+                )
+              ) {
+
+                return true;
+              }
+            }
+
+
+            return false;
+          }
+        );
+
+
+      if (
+        !alreadyExists
+      ) {
+
+        resultLines.push(
+          line
+        );
+      }
+    }
+  }
+
+
+  return resultLines
+    .join("\n");
 }
 
 
@@ -900,8 +1455,10 @@ function splitText(
   const pieces =
     [];
 
+
   let remaining =
     text.trim();
+
 
   while (
     remaining.length >
@@ -914,6 +1471,7 @@ function splitText(
         maxLength
       );
 
+
     if (
       cut < 100
     ) {
@@ -924,6 +1482,7 @@ function splitText(
           maxLength
         );
     }
+
 
     if (
       cut < 100
@@ -936,6 +1495,7 @@ function splitText(
         );
     }
 
+
     if (
       cut < 100
     ) {
@@ -943,6 +1503,7 @@ function splitText(
       cut =
         maxLength;
     }
+
 
     pieces.push(
       remaining
@@ -953,6 +1514,7 @@ function splitText(
         .trim()
     );
 
+
     remaining =
       remaining
         .slice(
@@ -960,6 +1522,7 @@ function splitText(
         )
         .trim();
   }
+
 
   if (
     remaining
@@ -969,6 +1532,7 @@ function splitText(
       remaining
     );
   }
+
 
   return pieces;
 }
@@ -980,6 +1544,7 @@ async function translateText() {
   const text =
     inputText.value.trim();
 
+
   const from =
     document
       .getElementById(
@@ -987,12 +1552,14 @@ async function translateText() {
       )
       .value;
 
+
   const to =
     document
       .getElementById(
         "toLang"
       )
       .value;
+
 
   if (!text) {
 
@@ -1002,6 +1569,7 @@ async function translateText() {
 
     return;
   }
+
 
   if (
     from === to
@@ -1016,11 +1584,21 @@ async function translateText() {
     return;
   }
 
+
+  translateButton.disabled =
+    true;
+
+  cameraButton.disabled =
+    true;
+
+
   statusText.innerText =
     "🌍 Översätter...";
 
+
   result.innerText =
     "Översätter...";
+
 
   try {
 
@@ -1030,12 +1608,29 @@ async function translateText() {
         450
       );
 
-    let translatedText =
-      "";
+
+    let translatedParts =
+      [];
+
 
     for (
-      const chunk of chunks
+      let i = 0;
+      i <
+      chunks.length;
+      i++
     ) {
+
+      statusText.innerText =
+        "🌍 Översätter del " +
+        (i + 1) +
+        " av " +
+        chunks.length +
+        "...";
+
+
+      const chunk =
+        chunks[i];
+
 
       const url =
 
@@ -1053,10 +1648,12 @@ async function translateText() {
           to
         );
 
+
       const response =
         await fetch(
           url
         );
+
 
       if (
         !response.ok
@@ -1068,12 +1665,15 @@ async function translateText() {
         );
       }
 
+
       const data =
         await response.json();
 
+
       if (
         !data.responseData ||
-        !data.responseData.translatedText
+        !data.responseData
+          .translatedText
       ) {
 
         throw new Error(
@@ -1081,14 +1681,18 @@ async function translateText() {
         );
       }
 
+
       let translated =
         data.responseData
           .translatedText
           .trim();
 
+
       if (
-        translated.toLowerCase() ===
-        chunk.toLowerCase() &&
+        translated
+          .toLowerCase() ===
+        chunk
+          .toLowerCase() &&
 
         Array.isArray(
           data.matches
@@ -1107,6 +1711,7 @@ async function translateText() {
                 .toLowerCase()
           );
 
+
         if (
           betterMatch
         ) {
@@ -1118,25 +1723,26 @@ async function translateText() {
         }
       }
 
-      translatedText +=
-        translated +
-        "\n\n";
+
+      translatedParts.push(
+        translated
+      );
     }
 
-    translatedText =
-      translatedText
 
+    let translatedText =
+      translatedParts
+        .join("\n\n")
         .replace(
           /\s+([,.!?;:])/g,
           "$1"
         )
-
         .replace(
           /\n{3,}/g,
           "\n\n"
         )
-
         .trim();
+
 
     if (
       !translatedText
@@ -1147,11 +1753,14 @@ async function translateText() {
       );
     }
 
+
     result.innerText =
       translatedText;
 
+
     statusText.innerText =
       "✅ Översättning klar";
+
 
   } catch (error) {
 
@@ -1160,14 +1769,24 @@ async function translateText() {
       error
     );
 
+
     result.innerText =
 
       "Översättningen kunde inte genomföras.\n\n" +
 
       error.message;
 
+
     statusText.innerText =
       "❌ Översättningen misslyckades";
+
+  } finally {
+
+    translateButton.disabled =
+      false;
+
+    cameraButton.disabled =
+      false;
   }
 }
 
