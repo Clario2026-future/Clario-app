@@ -1,316 +1,3 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clario</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
-    }
-
-    .app {
-      max-width: 600px;
-      margin: auto;
-      min-height: 100vh;
-      background: white;
-      padding-bottom: 40px;
-    }
-
-    header {
-      background: linear-gradient(135deg, #246bfd, #59c4e8);
-      color: white;
-      padding: 35px 20px 28px;
-      text-align: center;
-      border-radius: 0 0 30px 30px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 38px;
-    }
-
-    header p {
-      margin: 8px 0 0;
-      opacity: 0.95;
-    }
-
-    .container {
-      padding: 22px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid #d9e0ea;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 16px;
-      background: #fff;
-    }
-
-    textarea {
-      min-height: 140px;
-      resize: vertical;
-    }
-
-    .languages {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 15px;
-      padding: 16px;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 12px;
-    }
-
-    .translate-btn {
-      background: #246bfd;
-      color: white;
-    }
-
-    .camera-btn {
-      background: #eef4ff;
-      color: #246bfd;
-      border: 2px solid #246bfd;
-    }
-
-    .clear-btn {
-      background: #f1f3f5;
-      color: #444;
-    }
-
-    #imageInput {
-      display: none;
-    }
-
-    #preview {
-      width: 100%;
-      margin-top: 15px;
-      border-radius: 14px;
-      display: none;
-    }
-
-    .status {
-      text-align: center;
-      margin-top: 12px;
-      font-size: 14px;
-      color: #666;
-      min-height: 20px;
-    }
-
-    .result {
-      min-height: 120px;
-      padding: 15px;
-      background: #f6f9ff;
-      border-radius: 14px;
-      white-space: pre-wrap;
-      line-height: 1.5;
-    }
-
-    .logo {
-      font-size: 45px;
-      margin-bottom: 5px;
-    }
-
-    .small {
-      font-size: 13px;
-      color: #777;
-      text-align: center;
-      margin-top: 10px;
-    }
-  </style>
-</head>
-
-<body>
-
-<div class="app">
-
-  <header>
-    <div class="logo">🌍</div>
-    <h1>Clario</h1>
-    <p>Förstå dokument. Oavsett språk.</p>
-  </header>
-
-  <div class="container">
-
-    <div class="card">
-
-      <div class="languages">
-
-        <div>
-          <label>Från</label>
-          <select id="fromLang">
-            <option value="sv">Svenska</option>
-            <option value="en">Engelska</option>
-            <option value="ar">Arabiska</option>
-            <option value="de">Tyska</option>
-            <option value="fr">Franska</option>
-            <option value="es">Spanska</option>
-            <option value="it">Italienska</option>
-            <option value="tr">Turkiska</option>
-            <option value="pl">Polska</option>
-            <option value="uk">Ukrainska</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Till</label>
-          <select id="toLang">
-            <option value="en">Engelska</option>
-            <option value="sv" selected>Svenska</option>
-            <option value="ar">Arabiska</option>
-            <option value="de">Tyska</option>
-            <option value="fr">Franska</option>
-            <option value="es">Spanska</option>
-            <option value="it">Italienska</option>
-            <option value="tr">Turkiska</option>
-            <option value="pl">Polska</option>
-            <option value="uk">Ukrainska</option>
-          </select>
-        </div>
-
-      </div>
-
-      <label>Text eller dokument</label>
-
-      <textarea
-        id="inputText"
-        placeholder="Skriv eller klistra in text här..."
-      ></textarea>
-
-      <button class="translate-btn" onclick="translateText()">
-        🌍 Översätt
-      </button>
-
-      <button class="camera-btn" onclick="openCamera()">
-        📷 Ta kort på dokument
-      </button>
-
-      <input
-        type="file"
-        id="imageInput"
-        accept="image/*"
-        capture="environment"
-      >
-
-      <img id="preview">
-
-      <div class="status" id="status"></div>
-
-    </div>
-
-
-    <div class="card">
-
-      <label>Översättning</label>
-
-      <div id="result" class="result">
-        Din översättning visas här.
-      </div>
-
-      <button class="clear-btn" onclick="clearAll()">
-        Rensa
-      </button>
-
-    </div>
-
-    <div class="small">
-      Clario – enklare dokument för alla
-    </div>
-
-  </div>
-
-</div>
-
-
-<script>
-
-const inputText = document.getElementById("inputText");
-const result = document.getElementById("result");
-const statusText = document.getElementById("status");
-const imageInput = document.getElementById("imageInput");
-const preview = document.getElementById("preview");
-
-
-function openCamera() {
-  imageInput.click();
-}
-
-
-imageInput.addEventListener("change", async function(event) {
-
-  const file = event.target.files[0];
-
-  if (!file) return;
-
-  preview.src = URL.createObjectURL(file);
-  preview.style.display = "block";
-
-  statusText.innerText = "📄 Läser text från bilden...";
-
-  try {
-
-    const data = await Tesseract.recognize(
-      file,
-      "swe+eng"
-    );
-
-    const text = data.data.text.trim();
-
-    if (!text) {
-      statusText.innerText = "Ingen text kunde hittas.";
-      return;
-    }
-
-    inputText.value = text;
-
-    statusText.innerText = "✅ Texten är inläst. Tryck på Översätt.";
-
-  } catch (error) {
-
-    console.error(error);
-
-    statusText.innerText =
-      "Kunde inte läsa bilden. Prova med ett tydligare foto.";
-
-  }
-
-});
-
-
 async function translateText() {
 
   const text = inputText.value.trim();
@@ -320,6 +7,12 @@ async function translateText() {
 
   if (!text) {
     alert("Skriv en text eller ta kort på ett dokument först.");
+    return;
+  }
+
+  if (from === to) {
+    result.innerText = text;
+    statusText.innerText = "✅ Texten är redan på valt språk";
     return;
   }
 
@@ -338,20 +31,32 @@ async function translateText() {
         "https://api.mymemory.translated.net/get?q=" +
         encodeURIComponent(chunk) +
         "&langpair=" +
-        from +
-        "|" +
-        to;
+        encodeURIComponent(from + "|" + to);
+
+      console.log("Translation URL:", url);
 
       const response = await fetch(url);
 
+      console.log("HTTP status:", response.status);
+
       if (!response.ok) {
-        throw new Error("Translation error");
+        throw new Error(
+          "HTTP-fel från översättningstjänsten: " +
+          response.status
+        );
       }
 
       const data = await response.json();
 
-      if (!data.responseData) {
-        throw new Error("No translation");
+      console.log("Translation response:", data);
+
+      if (
+        !data.responseData ||
+        !data.responseData.translatedText
+      ) {
+        throw new Error(
+          "Översättning saknas i API-svaret"
+        );
       }
 
       translatedText +=
@@ -365,69 +70,15 @@ async function translateText() {
 
   } catch (error) {
 
-    console.error(error);
+    console.error("TRANSLATION ERROR:", error);
 
     result.innerText =
-      "Översättningen kunde inte genomföras just nu.";
+      "Översättningen kunde inte genomföras.\n\n" +
+      error.message;
 
     statusText.innerText =
-      "❌ Ett fel uppstod. Försök igen.";
+      "❌ Översättningen misslyckades";
 
   }
 
 }
-
-
-function splitText(text, maxLength) {
-
-  const chunks = [];
-
-  let current = "";
-
-  const words = text.split(" ");
-
-  for (const word of words) {
-
-    if ((current + " " + word).length > maxLength) {
-
-      chunks.push(current.trim());
-      current = word;
-
-    } else {
-
-      current += " " + word;
-
-    }
-
-  }
-
-  if (current.trim()) {
-    chunks.push(current.trim());
-  }
-
-  return chunks;
-
-}
-
-
-function clearAll() {
-
-  inputText.value = "";
-
-  result.innerText =
-    "Din översättning visas här.";
-
-  statusText.innerText = "";
-
-  preview.style.display = "none";
-
-  preview.src = "";
-
-  imageInput.value = "";
-
-}
-
-</script>
-
-</body>
-</html>
